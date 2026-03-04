@@ -1,0 +1,12 @@
+{
+  "input_dir": "/gpfs/home4/awibisono1/ecgxai/data/emglab/raw_wav",
+  "output_dir": "/gpfs/home4/awibisono1/ecgxai/data/emglab/windows_w400_h100",
+  "win_ms": 400.0,
+  "hop_ms": 100.0,
+  "recursive": false,
+  "num_files_seen": 10,
+  "num_ok": 10,
+  "num_skipped": 0,
+  "num_errors": 0,
+  "errors": []
+}
