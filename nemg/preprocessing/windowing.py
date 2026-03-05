@@ -199,3 +199,10 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# python nemg/preprocessing/windowing.py \
+#   --input_dir "data/emglab/raw_wav" \
+#   --output_dir "data/emglab/windows_w400_h100" \
+#   --win_ms 400 --hop_ms 100 \
+#   --limit 10 \
+#   --write_manifest
