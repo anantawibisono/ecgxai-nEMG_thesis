@@ -134,11 +134,4 @@ checkpoints
 lightning_logs
 
 #data
-data/emglab/windows_w100_h100/
-data/emglab/windows_w100_h100_minmax_f25/
-data/emglab/windows_w2000_h100/
-data/emglab/windows_w2000_h100_minmax_f25/
-data/emglab/windows_w500_h100/
-data/emglab/windows_w500_h100_minmax_f25/
-data/emglab/windows_w1000_h100/
-data/emglab/windows_w1000_h100_minmax_f25/
+data/emglab/
