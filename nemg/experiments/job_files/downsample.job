@@ -1,0 +1,41 @@
+#!/bin/bash
+#SBATCH --job-name=nemg_run
+#SBATCH --partition=gpu_mig
+#SBATCH --gpus=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=9
+#SBATCH --time=04:00:00
+
+# make experiments the working directory
+#SBATCH --chdir=/home/awibisono1/ecgxai/nemg/experiments
+
+# save logs inside experiments/job_log
+#SBATCH --output=job_log/%x_%j.out
+#SBATCH --error=job_log/%x_%j.err
+
+module purge
+module load 2025
+module load Anaconda3/2025.06-1
+
+# activate env here
+source ~/venvs/nemg/bin/activate
+
+cd /home/awibisono1/ecgxai
+
+srun python nemg/preprocessing/downsample_windows.py \
+  --input_dir "data/emglab/windows_w500_h100" \
+  --output_dir "data/emglab/windows_w500_h100_minmax_f25" \
+  --factor 25 \
+  --write_manifest
+
+srun python nemg/preprocessing/downsample_windows.py \
+  --input_dir "data/emglab/windows_w1000_h100" \
+  --output_dir "data/emglab/windows_w1000_h100_minmax_f25" \
+  --factor 25 \
+  --write_manifest
+
+srun python nemg/preprocessing/downsample_windows.py \
+  --input_dir "data/emglab/windows_w2000_h100" \
+  --output_dir "data/emglab/windows_w2000_h100_minmax_f25" \
+  --factor 25 \
+  --write_manifest

@@ -1,0 +1,78 @@
+[50/929] OK (50 ok, 0 skip, 0 err)
+[100/929] OK (100 ok, 0 skip, 0 err)
+[150/929] OK (150 ok, 0 skip, 0 err)
+[200/929] OK (200 ok, 0 skip, 0 err)
+[250/929] OK (250 ok, 0 skip, 0 err)
+[300/929] OK (300 ok, 0 skip, 0 err)
+[350/929] OK (350 ok, 0 skip, 0 err)
+[400/929] OK (400 ok, 0 skip, 0 err)
+[450/929] OK (450 ok, 0 skip, 0 err)
+[500/929] OK (500 ok, 0 skip, 0 err)
+[550/929] OK (550 ok, 0 skip, 0 err)
+[600/929] OK (600 ok, 0 skip, 0 err)
+[650/929] OK (650 ok, 0 skip, 0 err)
+[700/929] OK (700 ok, 0 skip, 0 err)
+[750/929] OK (750 ok, 0 skip, 0 err)
+[800/929] OK (800 ok, 0 skip, 0 err)
+[850/929] OK (850 ok, 0 skip, 0 err)
+[900/929] OK (900 ok, 0 skip, 0 err)
+[929/929] OK (929 ok, 0 skip, 0 err)
+
+Done.
+Input:  /gpfs/home4/awibisono1/ecgxai/data/emglab/windows_w500_h100
+Output: /gpfs/home4/awibisono1/ecgxai/data/emglab/windows_w500_h100_minmax_f25
+factor=25
+Processed: 929 files -> 929 ok, 0 skipped, 0 errors
+Manifest written to: /gpfs/home4/awibisono1/ecgxai/data/emglab/windows_w500_h100_minmax_f25/manifest.json
+[50/929] OK (50 ok, 0 skip, 0 err)
+[100/929] OK (100 ok, 0 skip, 0 err)
+[150/929] OK (150 ok, 0 skip, 0 err)
+[200/929] OK (200 ok, 0 skip, 0 err)
+[250/929] OK (250 ok, 0 skip, 0 err)
+[300/929] OK (300 ok, 0 skip, 0 err)
+[350/929] OK (350 ok, 0 skip, 0 err)
+[400/929] OK (400 ok, 0 skip, 0 err)
+[450/929] OK (450 ok, 0 skip, 0 err)
+[500/929] OK (500 ok, 0 skip, 0 err)
+[550/929] OK (550 ok, 0 skip, 0 err)
+[600/929] OK (600 ok, 0 skip, 0 err)
+[650/929] OK (650 ok, 0 skip, 0 err)
+[700/929] OK (700 ok, 0 skip, 0 err)
+[750/929] OK (750 ok, 0 skip, 0 err)
+[800/929] OK (800 ok, 0 skip, 0 err)
+[850/929] OK (850 ok, 0 skip, 0 err)
+[900/929] OK (900 ok, 0 skip, 0 err)
+[929/929] OK (929 ok, 0 skip, 0 err)
+
+Done.
+Input:  /gpfs/home4/awibisono1/ecgxai/data/emglab/windows_w1000_h100
+Output: /gpfs/home4/awibisono1/ecgxai/data/emglab/windows_w1000_h100_minmax_f25
+factor=25
+Processed: 929 files -> 929 ok, 0 skipped, 0 errors
+Manifest written to: /gpfs/home4/awibisono1/ecgxai/data/emglab/windows_w1000_h100_minmax_f25/manifest.json
+[50/929] OK (50 ok, 0 skip, 0 err)
+[100/929] OK (100 ok, 0 skip, 0 err)
+[150/929] OK (150 ok, 0 skip, 0 err)
+[200/929] OK (200 ok, 0 skip, 0 err)
+[250/929] OK (250 ok, 0 skip, 0 err)
+[300/929] OK (300 ok, 0 skip, 0 err)
+[350/929] OK (350 ok, 0 skip, 0 err)
+[400/929] OK (400 ok, 0 skip, 0 err)
+[450/929] OK (450 ok, 0 skip, 0 err)
+[500/929] OK (500 ok, 0 skip, 0 err)
+[550/929] OK (550 ok, 0 skip, 0 err)
+[600/929] OK (600 ok, 0 skip, 0 err)
+[650/929] OK (650 ok, 0 skip, 0 err)
+[700/929] OK (700 ok, 0 skip, 0 err)
+[750/929] OK (750 ok, 0 skip, 0 err)
+[800/929] OK (800 ok, 0 skip, 0 err)
+[850/929] OK (850 ok, 0 skip, 0 err)
+[900/929] OK (900 ok, 0 skip, 0 err)
+[929/929] OK (929 ok, 0 skip, 0 err)
+
+Done.
+Input:  /gpfs/home4/awibisono1/ecgxai/data/emglab/windows_w2000_h100
+Output: /gpfs/home4/awibisono1/ecgxai/data/emglab/windows_w2000_h100_minmax_f25
+factor=25
+Processed: 929 files -> 929 ok, 0 skipped, 0 errors
+Manifest written to: /gpfs/home4/awibisono1/ecgxai/data/emglab/windows_w2000_h100_minmax_f25/manifest.json

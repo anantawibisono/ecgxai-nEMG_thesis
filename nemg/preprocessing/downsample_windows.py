@@ -251,3 +251,9 @@ if __name__ == "__main__":
 #   --factor 25 \
 #   --limit 10 \
 #   --write_manifest
+
+# python nemg/preprocessing/downsample_windows.py \
+#   --input_dir "data/emglab/windows_w100_h100" \
+#   --output_dir "data/emglab/windows_w100_h100_minmax_f25" \
+#   --factor 25 \
+#   --write_manifest

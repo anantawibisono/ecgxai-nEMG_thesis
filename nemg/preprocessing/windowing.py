@@ -206,3 +206,27 @@ if __name__ == "__main__":
 #   --win_ms 400 --hop_ms 100 \
 #   --limit 10 \
 #   --write_manifest
+
+# python nemg/preprocessing/windowing.py \
+#   --input_dir "data/emglab/raw_wav" \
+#   --output_dir "data/emglab/windows_w100_h100" \
+#   --win_ms 100 --hop_ms 100 \
+#   --write_manifest
+
+# python nemg/preprocessing/windowing.py \
+#   --input_dir "data/emglab/raw_wav" \
+#   --output_dir "data/emglab/windows_w500_h100" \
+#   --win_ms 500 --hop_ms 100 \
+#   --write_manifest
+
+# python nemg/preprocessing/windowing.py \
+#   --input_dir "data/emglab/raw_wav" \
+#   --output_dir "data/emglab/windows_w1000_h100" \
+#   --win_ms 1000 --hop_ms 100 \
+#   --write_manifest
+
+# python nemg/preprocessing/windowing.py \
+#   --input_dir "data/emglab/raw_wav" \
+#   --output_dir "data/emglab/windows_w2000_h100" \
+#   --win_ms 2000 --hop_ms 100 \
+#   --write_manifest

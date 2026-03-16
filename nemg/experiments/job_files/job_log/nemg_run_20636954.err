@@ -1,0 +1,24 @@
+============================================================================================== 
+Warning! Mixing Conda and module environments may lead to corruption of the
+user environment. 
+We do not recommend users mixing those two environments unless absolutely
+necessary. Note that 
+SURF does not provide any support for Conda environment.
+For more information, please refer to our software policy page:
+https://servicedesk.surf.nl/wiki/display/WIKI/Software+policy+Snellius#SoftwarepolicySnellius-UseofAnacondaandMinicondaenvironmentsonSnellius 
+
+Remember that many packages have already been installed on the system and can
+be loaded using 
+the 'module load <package__name>' command. If you are uncertain if a package is
+already available 
+on the system, please use 'module avail' or 'module spider' to search for it.
+============================================================================================== 
+No .npz files found under /gpfs/home4/awibisono1/ecgxai/nemg/preprocessing/data/emglab/windows_w500_h100
+srun: error: gcn3: task 0: Exited with exit code 1
+srun: Terminating StepId=20636954.0
+No .npz files found under /gpfs/home4/awibisono1/ecgxai/nemg/preprocessing/data/emglab/windows_w1000_h100
+srun: error: gcn3: task 0: Exited with exit code 1
+srun: Terminating StepId=20636954.1
+No .npz files found under /gpfs/home4/awibisono1/ecgxai/nemg/preprocessing/data/emglab/windows_w2000_h100
+srun: error: gcn3: task 0: Exited with exit code 1
+srun: Terminating StepId=20636954.2

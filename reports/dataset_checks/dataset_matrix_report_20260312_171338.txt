@@ -1,0 +1,2021 @@
+====================================================================================================
+DATASET SMOKE TEST MATRIX REPORT
+====================================================================================================
+Started at : 2026-03-12T17:13:38
+Finished at: 2026-03-12T17:33:56
+Python     : /home/awibisono1/venvs/nemg/bin/python
+Script     : nemg/dataset/dataset.py
+Splits root: data/emglab/splits
+Windows root: data/emglab
+
+SUMMARY
+----------------------------------------------------------------------------------------------------
+Total runs : 50
+Passed     : 50
+Failed     : 0
+
+RESULTS OVERVIEW
+----------------------------------------------------------------------------------------------------
+[PASS] fold_0 | windows_w1000_h100               | RAW | 63.45s
+[PASS] fold_0 | windows_w1000_h100_minmax_f25    | DS  | 6.02s
+[PASS] fold_0 | windows_w100_h100                | RAW | 10.20s
+[PASS] fold_0 | windows_w100_h100_minmax_f25     | DS  | 4.23s
+[PASS] fold_0 | windows_w2000_h100               | RAW | 102.58s
+[PASS] fold_0 | windows_w2000_h100_minmax_f25    | DS  | 8.14s
+[PASS] fold_0 | windows_w400_h100                | RAW | 14.95s
+[PASS] fold_0 | windows_w400_h100_minmax_f25     | DS  | 4.92s
+[PASS] fold_0 | windows_w500_h100                | RAW | 33.07s
+[PASS] fold_0 | windows_w500_h100_minmax_f25     | DS  | 5.21s
+[PASS] fold_1 | windows_w1000_h100               | RAW | 57.93s
+[PASS] fold_1 | windows_w1000_h100_minmax_f25    | DS  | 5.25s
+[PASS] fold_1 | windows_w100_h100                | RAW | 9.49s
+[PASS] fold_1 | windows_w100_h100_minmax_f25     | DS  | 3.11s
+[PASS] fold_1 | windows_w2000_h100               | RAW | 101.38s
+[PASS] fold_1 | windows_w2000_h100_minmax_f25    | DS  | 7.51s
+[PASS] fold_1 | windows_w400_h100                | RAW | 14.41s
+[PASS] fold_1 | windows_w400_h100_minmax_f25     | DS  | 4.37s
+[PASS] fold_1 | windows_w500_h100                | RAW | 32.04s
+[PASS] fold_1 | windows_w500_h100_minmax_f25     | DS  | 4.44s
+[PASS] fold_2 | windows_w1000_h100               | RAW | 58.34s
+[PASS] fold_2 | windows_w1000_h100_minmax_f25    | DS  | 5.40s
+[PASS] fold_2 | windows_w100_h100                | RAW | 9.52s
+[PASS] fold_2 | windows_w100_h100_minmax_f25     | DS  | 3.24s
+[PASS] fold_2 | windows_w2000_h100               | RAW | 101.77s
+[PASS] fold_2 | windows_w2000_h100_minmax_f25    | DS  | 7.54s
+[PASS] fold_2 | windows_w400_h100                | RAW | 14.73s
+[PASS] fold_2 | windows_w400_h100_minmax_f25     | DS  | 5.07s
+[PASS] fold_2 | windows_w500_h100                | RAW | 32.38s
+[PASS] fold_2 | windows_w500_h100_minmax_f25     | DS  | 4.70s
+[PASS] fold_3 | windows_w1000_h100               | RAW | 58.50s
+[PASS] fold_3 | windows_w1000_h100_minmax_f25    | DS  | 5.42s
+[PASS] fold_3 | windows_w100_h100                | RAW | 9.56s
+[PASS] fold_3 | windows_w100_h100_minmax_f25     | DS  | 3.23s
+[PASS] fold_3 | windows_w2000_h100               | RAW | 102.00s
+[PASS] fold_3 | windows_w2000_h100_minmax_f25    | DS  | 7.45s
+[PASS] fold_3 | windows_w400_h100                | RAW | 14.98s
+[PASS] fold_3 | windows_w400_h100_minmax_f25     | DS  | 4.25s
+[PASS] fold_3 | windows_w500_h100                | RAW | 32.28s
+[PASS] fold_3 | windows_w500_h100_minmax_f25     | DS  | 4.42s
+[PASS] fold_4 | windows_w1000_h100               | RAW | 58.37s
+[PASS] fold_4 | windows_w1000_h100_minmax_f25    | DS  | 5.43s
+[PASS] fold_4 | windows_w100_h100                | RAW | 9.47s
+[PASS] fold_4 | windows_w100_h100_minmax_f25     | DS  | 3.24s
+[PASS] fold_4 | windows_w2000_h100               | RAW | 101.77s
+[PASS] fold_4 | windows_w2000_h100_minmax_f25    | DS  | 7.38s
+[PASS] fold_4 | windows_w400_h100                | RAW | 14.32s
+[PASS] fold_4 | windows_w400_h100_minmax_f25     | DS  | 4.16s
+[PASS] fold_4 | windows_w500_h100                | RAW | 32.24s
+[PASS] fold_4 | windows_w500_h100_minmax_f25     | DS  | 4.48s
+
+DETAILED OUTPUT
+----------------------------------------------------------------------------------------------------
+Run #1
+Status       : PASS
+Fold         : fold_0
+Windows dir  : windows_w1000_h100
+Downsampled  : False
+Duration     : 63.4509s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_0 data/emglab/windows_w1000_h100
+
+[STDOUT]
+
+=== Train set (raw) ===
+  Total windows   : 66,283
+  Window length   : 23438 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 22,015 windows
+    Normal       (1): 21,420 windows
+    Myopathy     (2): 22,848 windows
+
+=== Val set (raw) ===
+  Total windows   : 18,972
+  Window length   : 23438 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 6,732 windows
+    Normal       (1): 6,120 windows
+    Myopathy     (2): 6,120 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 23438])  dtype=torch.float32
+  labels        : [2, 2, 1, 1, 0, 0, 1, 0]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #2
+Status       : PASS
+Fold         : fold_0
+Windows dir  : windows_w1000_h100_minmax_f25
+Downsampled  : True
+Duration     : 6.0195s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_0 data/emglab/windows_w1000_h100_minmax_f25 --ds
+
+[STDOUT]
+
+=== Train set (downsampled) ===
+  Total windows   : 66,283
+  Window length   : 936 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 22,015 windows
+    Normal       (1): 21,420 windows
+    Myopathy     (2): 22,848 windows
+
+=== Val set (downsampled) ===
+  Total windows   : 18,972
+  Window length   : 936 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 6,732 windows
+    Normal       (1): 6,120 windows
+    Myopathy     (2): 6,120 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 936])  dtype=torch.float32
+  labels        : [2, 2, 2, 0, 2, 1, 1, 0]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #3
+Status       : PASS
+Fold         : fold_0
+Windows dir  : windows_w100_h100
+Downsampled  : False
+Duration     : 10.1962s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_0 data/emglab/windows_w100_h100
+
+[STDOUT]
+
+=== Train set (raw) ===
+  Total windows   : 72,133
+  Window length   : 2344 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 23,959 windows
+    Normal       (1): 23,310 windows
+    Myopathy     (2): 24,864 windows
+
+=== Val set (raw) ===
+  Total windows   : 20,646
+  Window length   : 2344 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 7,326 windows
+    Normal       (1): 6,660 windows
+    Myopathy     (2): 6,660 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 2344])  dtype=torch.float32
+  labels        : [2, 0, 0, 2, 0, 2, 1, 1]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #4
+Status       : PASS
+Fold         : fold_0
+Windows dir  : windows_w100_h100_minmax_f25
+Downsampled  : True
+Duration     : 4.2312s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_0 data/emglab/windows_w100_h100_minmax_f25 --ds
+
+[STDOUT]
+
+=== Train set (downsampled) ===
+  Total windows   : 72,133
+  Window length   : 92 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 23,959 windows
+    Normal       (1): 23,310 windows
+    Myopathy     (2): 24,864 windows
+
+=== Val set (downsampled) ===
+  Total windows   : 20,646
+  Window length   : 92 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 7,326 windows
+    Normal       (1): 6,660 windows
+    Myopathy     (2): 6,660 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 92])  dtype=torch.float32
+  labels        : [2, 2, 0, 2, 2, 2, 1, 0]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #5
+Status       : PASS
+Fold         : fold_0
+Windows dir  : windows_w2000_h100
+Downsampled  : False
+Duration     : 102.5830s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_0 data/emglab/windows_w2000_h100
+
+[STDOUT]
+
+=== Train set (raw) ===
+  Total windows   : 59,783
+  Window length   : 46876 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 19,855 windows
+    Normal       (1): 19,320 windows
+    Myopathy     (2): 20,608 windows
+
+=== Val set (raw) ===
+  Total windows   : 17,112
+  Window length   : 46876 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 6,072 windows
+    Normal       (1): 5,520 windows
+    Myopathy     (2): 5,520 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 46876])  dtype=torch.float32
+  labels        : [0, 2, 2, 1, 0, 2, 1, 2]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #6
+Status       : PASS
+Fold         : fold_0
+Windows dir  : windows_w2000_h100_minmax_f25
+Downsampled  : True
+Duration     : 8.1351s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_0 data/emglab/windows_w2000_h100_minmax_f25 --ds
+
+[STDOUT]
+
+=== Train set (downsampled) ===
+  Total windows   : 59,783
+  Window length   : 1874 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 19,855 windows
+    Normal       (1): 19,320 windows
+    Myopathy     (2): 20,608 windows
+
+=== Val set (downsampled) ===
+  Total windows   : 17,112
+  Window length   : 1874 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 6,072 windows
+    Normal       (1): 5,520 windows
+    Myopathy     (2): 5,520 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 1874])  dtype=torch.float32
+  labels        : [1, 1, 1, 0, 1, 1, 1, 1]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #7
+Status       : PASS
+Fold         : fold_0
+Windows dir  : windows_w400_h100
+Downsampled  : False
+Duration     : 14.9486s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_0 data/emglab/windows_w400_h100
+
+[STDOUT]
+
+=== Train set (raw) ===
+  Total windows   : 70,183
+  Window length   : 9375 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 23,311 windows
+    Normal       (1): 22,680 windows
+    Myopathy     (2): 24,192 windows
+
+=== Val set (raw) ===
+  Total windows   : 20,088
+  Window length   : 9375 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 7,128 windows
+    Normal       (1): 6,480 windows
+    Myopathy     (2): 6,480 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 9375])  dtype=torch.float32
+  labels        : [1, 0, 2, 1, 1, 0, 0, 2]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #8
+Status       : PASS
+Fold         : fold_0
+Windows dir  : windows_w400_h100_minmax_f25
+Downsampled  : True
+Duration     : 4.9166s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_0 data/emglab/windows_w400_h100_minmax_f25 --ds
+
+[STDOUT]
+
+=== Train set (downsampled) ===
+  Total windows   : 70,183
+  Window length   : 374 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 23,311 windows
+    Normal       (1): 22,680 windows
+    Myopathy     (2): 24,192 windows
+
+=== Val set (downsampled) ===
+  Total windows   : 20,088
+  Window length   : 374 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 7,128 windows
+    Normal       (1): 6,480 windows
+    Myopathy     (2): 6,480 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 374])  dtype=torch.float32
+  labels        : [0, 0, 0, 0, 1, 1, 2, 2]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #9
+Status       : PASS
+Fold         : fold_0
+Windows dir  : windows_w500_h100
+Downsampled  : False
+Duration     : 33.0661s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_0 data/emglab/windows_w500_h100
+
+[STDOUT]
+
+=== Train set (raw) ===
+  Total windows   : 69,533
+  Window length   : 11719 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 23,095 windows
+    Normal       (1): 22,470 windows
+    Myopathy     (2): 23,968 windows
+
+=== Val set (raw) ===
+  Total windows   : 19,902
+  Window length   : 11719 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 7,062 windows
+    Normal       (1): 6,420 windows
+    Myopathy     (2): 6,420 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 11719])  dtype=torch.float32
+  labels        : [2, 2, 1, 0, 2, 1, 0, 0]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #10
+Status       : PASS
+Fold         : fold_0
+Windows dir  : windows_w500_h100_minmax_f25
+Downsampled  : True
+Duration     : 5.2135s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_0 data/emglab/windows_w500_h100_minmax_f25 --ds
+
+[STDOUT]
+
+=== Train set (downsampled) ===
+  Total windows   : 69,533
+  Window length   : 468 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 23,095 windows
+    Normal       (1): 22,470 windows
+    Myopathy     (2): 23,968 windows
+
+=== Val set (downsampled) ===
+  Total windows   : 19,902
+  Window length   : 468 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 7,062 windows
+    Normal       (1): 6,420 windows
+    Myopathy     (2): 6,420 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 468])  dtype=torch.float32
+  labels        : [1, 0, 0, 0, 2, 1, 0, 1]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #11
+Status       : PASS
+Fold         : fold_1
+Windows dir  : windows_w1000_h100
+Downsampled  : False
+Duration     : 57.9348s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_1 data/emglab/windows_w1000_h100
+
+[STDOUT]
+
+=== Train set (raw) ===
+  Total windows   : 69,547
+  Window length   : 23438 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 24,463 windows
+    Normal       (1): 21,420 windows
+    Myopathy     (2): 23,664 windows
+
+=== Val set (raw) ===
+  Total windows   : 15,708
+  Window length   : 23438 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 4,284 windows
+    Normal       (1): 6,120 windows
+    Myopathy     (2): 5,304 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 23438])  dtype=torch.float32
+  labels        : [2, 2, 2, 1, 1, 1, 1, 0]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #12
+Status       : PASS
+Fold         : fold_1
+Windows dir  : windows_w1000_h100_minmax_f25
+Downsampled  : True
+Duration     : 5.2519s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_1 data/emglab/windows_w1000_h100_minmax_f25 --ds
+
+[STDOUT]
+
+=== Train set (downsampled) ===
+  Total windows   : 69,547
+  Window length   : 936 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 24,463 windows
+    Normal       (1): 21,420 windows
+    Myopathy     (2): 23,664 windows
+
+=== Val set (downsampled) ===
+  Total windows   : 15,708
+  Window length   : 936 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 4,284 windows
+    Normal       (1): 6,120 windows
+    Myopathy     (2): 5,304 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 936])  dtype=torch.float32
+  labels        : [1, 1, 1, 0, 0, 0, 1, 0]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #13
+Status       : PASS
+Fold         : fold_1
+Windows dir  : windows_w100_h100
+Downsampled  : False
+Duration     : 9.4901s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_1 data/emglab/windows_w100_h100
+
+[STDOUT]
+
+=== Train set (raw) ===
+  Total windows   : 75,685
+  Window length   : 2344 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 26,623 windows
+    Normal       (1): 23,310 windows
+    Myopathy     (2): 25,752 windows
+
+=== Val set (raw) ===
+  Total windows   : 17,094
+  Window length   : 2344 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 4,662 windows
+    Normal       (1): 6,660 windows
+    Myopathy     (2): 5,772 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 2344])  dtype=torch.float32
+  labels        : [0, 2, 0, 1, 0, 1, 0, 0]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #14
+Status       : PASS
+Fold         : fold_1
+Windows dir  : windows_w100_h100_minmax_f25
+Downsampled  : True
+Duration     : 3.1118s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_1 data/emglab/windows_w100_h100_minmax_f25 --ds
+
+[STDOUT]
+
+=== Train set (downsampled) ===
+  Total windows   : 75,685
+  Window length   : 92 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 26,623 windows
+    Normal       (1): 23,310 windows
+    Myopathy     (2): 25,752 windows
+
+=== Val set (downsampled) ===
+  Total windows   : 17,094
+  Window length   : 92 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 4,662 windows
+    Normal       (1): 6,660 windows
+    Myopathy     (2): 5,772 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 92])  dtype=torch.float32
+  labels        : [2, 2, 2, 1, 0, 1, 2, 0]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #15
+Status       : PASS
+Fold         : fold_1
+Windows dir  : windows_w2000_h100
+Downsampled  : False
+Duration     : 101.3775s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_1 data/emglab/windows_w2000_h100
+
+[STDOUT]
+
+=== Train set (raw) ===
+  Total windows   : 62,727
+  Window length   : 46876 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 22,063 windows
+    Normal       (1): 19,320 windows
+    Myopathy     (2): 21,344 windows
+
+=== Val set (raw) ===
+  Total windows   : 14,168
+  Window length   : 46876 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 3,864 windows
+    Normal       (1): 5,520 windows
+    Myopathy     (2): 4,784 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 46876])  dtype=torch.float32
+  labels        : [0, 0, 0, 1, 2, 2, 1, 0]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #16
+Status       : PASS
+Fold         : fold_1
+Windows dir  : windows_w2000_h100_minmax_f25
+Downsampled  : True
+Duration     : 7.5068s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_1 data/emglab/windows_w2000_h100_minmax_f25 --ds
+
+[STDOUT]
+
+=== Train set (downsampled) ===
+  Total windows   : 62,727
+  Window length   : 1874 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 22,063 windows
+    Normal       (1): 19,320 windows
+    Myopathy     (2): 21,344 windows
+
+=== Val set (downsampled) ===
+  Total windows   : 14,168
+  Window length   : 1874 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 3,864 windows
+    Normal       (1): 5,520 windows
+    Myopathy     (2): 4,784 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 1874])  dtype=torch.float32
+  labels        : [2, 0, 1, 2, 0, 1, 0, 2]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #17
+Status       : PASS
+Fold         : fold_1
+Windows dir  : windows_w400_h100
+Downsampled  : False
+Duration     : 14.4091s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_1 data/emglab/windows_w400_h100
+
+[STDOUT]
+
+=== Train set (raw) ===
+  Total windows   : 73,639
+  Window length   : 9375 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 25,903 windows
+    Normal       (1): 22,680 windows
+    Myopathy     (2): 25,056 windows
+
+=== Val set (raw) ===
+  Total windows   : 16,632
+  Window length   : 9375 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 4,536 windows
+    Normal       (1): 6,480 windows
+    Myopathy     (2): 5,616 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 9375])  dtype=torch.float32
+  labels        : [1, 1, 0, 0, 1, 0, 1, 1]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #18
+Status       : PASS
+Fold         : fold_1
+Windows dir  : windows_w400_h100_minmax_f25
+Downsampled  : True
+Duration     : 4.3741s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_1 data/emglab/windows_w400_h100_minmax_f25 --ds
+
+[STDOUT]
+
+=== Train set (downsampled) ===
+  Total windows   : 73,639
+  Window length   : 374 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 25,903 windows
+    Normal       (1): 22,680 windows
+    Myopathy     (2): 25,056 windows
+
+=== Val set (downsampled) ===
+  Total windows   : 16,632
+  Window length   : 374 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 4,536 windows
+    Normal       (1): 6,480 windows
+    Myopathy     (2): 5,616 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 374])  dtype=torch.float32
+  labels        : [2, 2, 0, 0, 2, 1, 1, 0]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #19
+Status       : PASS
+Fold         : fold_1
+Windows dir  : windows_w500_h100
+Downsampled  : False
+Duration     : 32.0412s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_1 data/emglab/windows_w500_h100
+
+[STDOUT]
+
+=== Train set (raw) ===
+  Total windows   : 72,957
+  Window length   : 11719 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 25,663 windows
+    Normal       (1): 22,470 windows
+    Myopathy     (2): 24,824 windows
+
+=== Val set (raw) ===
+  Total windows   : 16,478
+  Window length   : 11719 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 4,494 windows
+    Normal       (1): 6,420 windows
+    Myopathy     (2): 5,564 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 11719])  dtype=torch.float32
+  labels        : [0, 0, 0, 2, 2, 2, 2, 0]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #20
+Status       : PASS
+Fold         : fold_1
+Windows dir  : windows_w500_h100_minmax_f25
+Downsampled  : True
+Duration     : 4.4401s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_1 data/emglab/windows_w500_h100_minmax_f25 --ds
+
+[STDOUT]
+
+=== Train set (downsampled) ===
+  Total windows   : 72,957
+  Window length   : 468 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 25,663 windows
+    Normal       (1): 22,470 windows
+    Myopathy     (2): 24,824 windows
+
+=== Val set (downsampled) ===
+  Total windows   : 16,478
+  Window length   : 468 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 4,494 windows
+    Normal       (1): 6,420 windows
+    Myopathy     (2): 5,564 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 468])  dtype=torch.float32
+  labels        : [2, 2, 2, 1, 1, 2, 1, 0]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #21
+Status       : PASS
+Fold         : fold_2
+Windows dir  : windows_w1000_h100
+Downsampled  : False
+Duration     : 58.3426s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_2 data/emglab/windows_w1000_h100
+
+[STDOUT]
+
+=== Train set (raw) ===
+  Total windows   : 69,955
+  Window length   : 23438 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 24,667 windows
+    Normal       (1): 21,420 windows
+    Myopathy     (2): 23,868 windows
+
+=== Val set (raw) ===
+  Total windows   : 15,300
+  Window length   : 23438 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 4,080 windows
+    Normal       (1): 6,120 windows
+    Myopathy     (2): 5,100 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 23438])  dtype=torch.float32
+  labels        : [0, 1, 2, 1, 2, 2, 0, 0]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #22
+Status       : PASS
+Fold         : fold_2
+Windows dir  : windows_w1000_h100_minmax_f25
+Downsampled  : True
+Duration     : 5.4004s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_2 data/emglab/windows_w1000_h100_minmax_f25 --ds
+
+[STDOUT]
+
+=== Train set (downsampled) ===
+  Total windows   : 69,955
+  Window length   : 936 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 24,667 windows
+    Normal       (1): 21,420 windows
+    Myopathy     (2): 23,868 windows
+
+=== Val set (downsampled) ===
+  Total windows   : 15,300
+  Window length   : 936 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 4,080 windows
+    Normal       (1): 6,120 windows
+    Myopathy     (2): 5,100 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 936])  dtype=torch.float32
+  labels        : [0, 2, 0, 1, 2, 2, 1, 0]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #23
+Status       : PASS
+Fold         : fold_2
+Windows dir  : windows_w100_h100
+Downsampled  : False
+Duration     : 9.5235s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_2 data/emglab/windows_w100_h100
+
+[STDOUT]
+
+=== Train set (raw) ===
+  Total windows   : 76,129
+  Window length   : 2344 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 26,845 windows
+    Normal       (1): 23,310 windows
+    Myopathy     (2): 25,974 windows
+
+=== Val set (raw) ===
+  Total windows   : 16,650
+  Window length   : 2344 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 4,440 windows
+    Normal       (1): 6,660 windows
+    Myopathy     (2): 5,550 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 2344])  dtype=torch.float32
+  labels        : [1, 1, 1, 1, 1, 0, 0, 2]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #24
+Status       : PASS
+Fold         : fold_2
+Windows dir  : windows_w100_h100_minmax_f25
+Downsampled  : True
+Duration     : 3.2360s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_2 data/emglab/windows_w100_h100_minmax_f25 --ds
+
+[STDOUT]
+
+=== Train set (downsampled) ===
+  Total windows   : 76,129
+  Window length   : 92 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 26,845 windows
+    Normal       (1): 23,310 windows
+    Myopathy     (2): 25,974 windows
+
+=== Val set (downsampled) ===
+  Total windows   : 16,650
+  Window length   : 92 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 4,440 windows
+    Normal       (1): 6,660 windows
+    Myopathy     (2): 5,550 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 92])  dtype=torch.float32
+  labels        : [2, 2, 0, 2, 1, 1, 0, 0]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #25
+Status       : PASS
+Fold         : fold_2
+Windows dir  : windows_w2000_h100
+Downsampled  : False
+Duration     : 101.7650s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_2 data/emglab/windows_w2000_h100
+
+[STDOUT]
+
+=== Train set (raw) ===
+  Total windows   : 63,095
+  Window length   : 46876 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 22,247 windows
+    Normal       (1): 19,320 windows
+    Myopathy     (2): 21,528 windows
+
+=== Val set (raw) ===
+  Total windows   : 13,800
+  Window length   : 46876 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 3,680 windows
+    Normal       (1): 5,520 windows
+    Myopathy     (2): 4,600 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 46876])  dtype=torch.float32
+  labels        : [1, 2, 0, 1, 0, 0, 0, 2]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #26
+Status       : PASS
+Fold         : fold_2
+Windows dir  : windows_w2000_h100_minmax_f25
+Downsampled  : True
+Duration     : 7.5366s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_2 data/emglab/windows_w2000_h100_minmax_f25 --ds
+
+[STDOUT]
+
+=== Train set (downsampled) ===
+  Total windows   : 63,095
+  Window length   : 1874 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 22,247 windows
+    Normal       (1): 19,320 windows
+    Myopathy     (2): 21,528 windows
+
+=== Val set (downsampled) ===
+  Total windows   : 13,800
+  Window length   : 1874 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 3,680 windows
+    Normal       (1): 5,520 windows
+    Myopathy     (2): 4,600 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 1874])  dtype=torch.float32
+  labels        : [0, 2, 1, 0, 2, 2, 1, 2]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #27
+Status       : PASS
+Fold         : fold_2
+Windows dir  : windows_w400_h100
+Downsampled  : False
+Duration     : 14.7340s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_2 data/emglab/windows_w400_h100
+
+[STDOUT]
+
+=== Train set (raw) ===
+  Total windows   : 74,071
+  Window length   : 9375 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 26,119 windows
+    Normal       (1): 22,680 windows
+    Myopathy     (2): 25,272 windows
+
+=== Val set (raw) ===
+  Total windows   : 16,200
+  Window length   : 9375 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 4,320 windows
+    Normal       (1): 6,480 windows
+    Myopathy     (2): 5,400 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 9375])  dtype=torch.float32
+  labels        : [2, 1, 2, 1, 1, 0, 1, 0]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #28
+Status       : PASS
+Fold         : fold_2
+Windows dir  : windows_w400_h100_minmax_f25
+Downsampled  : True
+Duration     : 5.0681s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_2 data/emglab/windows_w400_h100_minmax_f25 --ds
+
+[STDOUT]
+
+=== Train set (downsampled) ===
+  Total windows   : 74,071
+  Window length   : 374 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 26,119 windows
+    Normal       (1): 22,680 windows
+    Myopathy     (2): 25,272 windows
+
+=== Val set (downsampled) ===
+  Total windows   : 16,200
+  Window length   : 374 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 4,320 windows
+    Normal       (1): 6,480 windows
+    Myopathy     (2): 5,400 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 374])  dtype=torch.float32
+  labels        : [0, 1, 1, 2, 1, 0, 0, 1]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #29
+Status       : PASS
+Fold         : fold_2
+Windows dir  : windows_w500_h100
+Downsampled  : False
+Duration     : 32.3812s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_2 data/emglab/windows_w500_h100
+
+[STDOUT]
+
+=== Train set (raw) ===
+  Total windows   : 73,385
+  Window length   : 11719 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 25,877 windows
+    Normal       (1): 22,470 windows
+    Myopathy     (2): 25,038 windows
+
+=== Val set (raw) ===
+  Total windows   : 16,050
+  Window length   : 11719 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 4,280 windows
+    Normal       (1): 6,420 windows
+    Myopathy     (2): 5,350 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 11719])  dtype=torch.float32
+  labels        : [2, 1, 2, 0, 0, 2, 0, 1]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #30
+Status       : PASS
+Fold         : fold_2
+Windows dir  : windows_w500_h100_minmax_f25
+Downsampled  : True
+Duration     : 4.6992s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_2 data/emglab/windows_w500_h100_minmax_f25 --ds
+
+[STDOUT]
+
+=== Train set (downsampled) ===
+  Total windows   : 73,385
+  Window length   : 468 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 25,877 windows
+    Normal       (1): 22,470 windows
+    Myopathy     (2): 25,038 windows
+
+=== Val set (downsampled) ===
+  Total windows   : 16,050
+  Window length   : 468 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 4,280 windows
+    Normal       (1): 6,420 windows
+    Myopathy     (2): 5,350 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 468])  dtype=torch.float32
+  labels        : [0, 1, 2, 0, 2, 1, 1, 0]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #31
+Status       : PASS
+Fold         : fold_3
+Windows dir  : windows_w1000_h100
+Downsampled  : False
+Duration     : 58.5011s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_3 data/emglab/windows_w1000_h100
+
+[STDOUT]
+
+=== Train set (raw) ===
+  Total windows   : 67,422
+  Window length   : 23438 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 22,134 windows
+    Normal       (1): 21,420 windows
+    Myopathy     (2): 23,868 windows
+
+=== Val set (raw) ===
+  Total windows   : 17,833
+  Window length   : 23438 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 6,613 windows
+    Normal       (1): 6,120 windows
+    Myopathy     (2): 5,100 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 23438])  dtype=torch.float32
+  labels        : [1, 0, 1, 1, 2, 1, 0, 1]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #32
+Status       : PASS
+Fold         : fold_3
+Windows dir  : windows_w1000_h100_minmax_f25
+Downsampled  : True
+Duration     : 5.4165s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_3 data/emglab/windows_w1000_h100_minmax_f25 --ds
+
+[STDOUT]
+
+=== Train set (downsampled) ===
+  Total windows   : 67,422
+  Window length   : 936 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 22,134 windows
+    Normal       (1): 21,420 windows
+    Myopathy     (2): 23,868 windows
+
+=== Val set (downsampled) ===
+  Total windows   : 17,833
+  Window length   : 936 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 6,613 windows
+    Normal       (1): 6,120 windows
+    Myopathy     (2): 5,100 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 936])  dtype=torch.float32
+  labels        : [0, 0, 2, 1, 2, 1, 2, 0]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #33
+Status       : PASS
+Fold         : fold_3
+Windows dir  : windows_w100_h100
+Downsampled  : False
+Duration     : 9.5592s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_3 data/emglab/windows_w100_h100
+
+[STDOUT]
+
+=== Train set (raw) ===
+  Total windows   : 73,371
+  Window length   : 2344 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 24,087 windows
+    Normal       (1): 23,310 windows
+    Myopathy     (2): 25,974 windows
+
+=== Val set (raw) ===
+  Total windows   : 19,408
+  Window length   : 2344 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 7,198 windows
+    Normal       (1): 6,660 windows
+    Myopathy     (2): 5,550 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 2344])  dtype=torch.float32
+  labels        : [1, 0, 0, 1, 1, 2, 1, 1]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #34
+Status       : PASS
+Fold         : fold_3
+Windows dir  : windows_w100_h100_minmax_f25
+Downsampled  : True
+Duration     : 3.2304s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_3 data/emglab/windows_w100_h100_minmax_f25 --ds
+
+[STDOUT]
+
+=== Train set (downsampled) ===
+  Total windows   : 73,371
+  Window length   : 92 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 24,087 windows
+    Normal       (1): 23,310 windows
+    Myopathy     (2): 25,974 windows
+
+=== Val set (downsampled) ===
+  Total windows   : 19,408
+  Window length   : 92 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 7,198 windows
+    Normal       (1): 6,660 windows
+    Myopathy     (2): 5,550 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 92])  dtype=torch.float32
+  labels        : [0, 2, 1, 2, 2, 1, 2, 1]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #35
+Status       : PASS
+Fold         : fold_3
+Windows dir  : windows_w2000_h100
+Downsampled  : False
+Duration     : 101.9974s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_3 data/emglab/windows_w2000_h100
+
+[STDOUT]
+
+=== Train set (raw) ===
+  Total windows   : 60,812
+  Window length   : 46876 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 19,964 windows
+    Normal       (1): 19,320 windows
+    Myopathy     (2): 21,528 windows
+
+=== Val set (raw) ===
+  Total windows   : 16,083
+  Window length   : 46876 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 5,963 windows
+    Normal       (1): 5,520 windows
+    Myopathy     (2): 4,600 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 46876])  dtype=torch.float32
+  labels        : [1, 1, 1, 2, 2, 2, 1, 1]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #36
+Status       : PASS
+Fold         : fold_3
+Windows dir  : windows_w2000_h100_minmax_f25
+Downsampled  : True
+Duration     : 7.4508s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_3 data/emglab/windows_w2000_h100_minmax_f25 --ds
+
+[STDOUT]
+
+=== Train set (downsampled) ===
+  Total windows   : 60,812
+  Window length   : 1874 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 19,964 windows
+    Normal       (1): 19,320 windows
+    Myopathy     (2): 21,528 windows
+
+=== Val set (downsampled) ===
+  Total windows   : 16,083
+  Window length   : 1874 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 5,963 windows
+    Normal       (1): 5,520 windows
+    Myopathy     (2): 4,600 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 1874])  dtype=torch.float32
+  labels        : [0, 0, 0, 1, 1, 1, 2, 1]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #37
+Status       : PASS
+Fold         : fold_3
+Windows dir  : windows_w400_h100
+Downsampled  : False
+Duration     : 14.9824s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_3 data/emglab/windows_w400_h100
+
+[STDOUT]
+
+=== Train set (raw) ===
+  Total windows   : 71,388
+  Window length   : 9375 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 23,436 windows
+    Normal       (1): 22,680 windows
+    Myopathy     (2): 25,272 windows
+
+=== Val set (raw) ===
+  Total windows   : 18,883
+  Window length   : 9375 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 7,003 windows
+    Normal       (1): 6,480 windows
+    Myopathy     (2): 5,400 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 9375])  dtype=torch.float32
+  labels        : [0, 1, 1, 2, 0, 0, 1, 0]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #38
+Status       : PASS
+Fold         : fold_3
+Windows dir  : windows_w400_h100_minmax_f25
+Downsampled  : True
+Duration     : 4.2490s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_3 data/emglab/windows_w400_h100_minmax_f25 --ds
+
+[STDOUT]
+
+=== Train set (downsampled) ===
+  Total windows   : 71,388
+  Window length   : 374 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 23,436 windows
+    Normal       (1): 22,680 windows
+    Myopathy     (2): 25,272 windows
+
+=== Val set (downsampled) ===
+  Total windows   : 18,883
+  Window length   : 374 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 7,003 windows
+    Normal       (1): 6,480 windows
+    Myopathy     (2): 5,400 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 374])  dtype=torch.float32
+  labels        : [1, 0, 0, 0, 0, 0, 1, 0]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #39
+Status       : PASS
+Fold         : fold_3
+Windows dir  : windows_w500_h100
+Downsampled  : False
+Duration     : 32.2826s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_3 data/emglab/windows_w500_h100
+
+[STDOUT]
+
+=== Train set (raw) ===
+  Total windows   : 70,727
+  Window length   : 11719 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 23,219 windows
+    Normal       (1): 22,470 windows
+    Myopathy     (2): 25,038 windows
+
+=== Val set (raw) ===
+  Total windows   : 18,708
+  Window length   : 11719 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 6,938 windows
+    Normal       (1): 6,420 windows
+    Myopathy     (2): 5,350 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 11719])  dtype=torch.float32
+  labels        : [0, 0, 1, 2, 0, 2, 2, 2]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #40
+Status       : PASS
+Fold         : fold_3
+Windows dir  : windows_w500_h100_minmax_f25
+Downsampled  : True
+Duration     : 4.4214s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_3 data/emglab/windows_w500_h100_minmax_f25 --ds
+
+[STDOUT]
+
+=== Train set (downsampled) ===
+  Total windows   : 70,727
+  Window length   : 468 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 23,219 windows
+    Normal       (1): 22,470 windows
+    Myopathy     (2): 25,038 windows
+
+=== Val set (downsampled) ===
+  Total windows   : 18,708
+  Window length   : 468 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 6,938 windows
+    Normal       (1): 6,420 windows
+    Myopathy     (2): 5,350 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 468])  dtype=torch.float32
+  labels        : [2, 1, 1, 1, 2, 0, 2, 2]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #41
+Status       : PASS
+Fold         : fold_4
+Windows dir  : windows_w1000_h100
+Downsampled  : False
+Duration     : 58.3717s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_4 data/emglab/windows_w1000_h100
+
+[STDOUT]
+
+=== Train set (raw) ===
+  Total windows   : 67,813
+  Window length   : 23438 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 21,709 windows
+    Normal       (1): 24,480 windows
+    Myopathy     (2): 21,624 windows
+
+=== Val set (raw) ===
+  Total windows   : 17,442
+  Window length   : 23438 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 7,038 windows
+    Normal       (1): 3,060 windows
+    Myopathy     (2): 7,344 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 23438])  dtype=torch.float32
+  labels        : [0, 0, 0, 0, 1, 2, 0, 1]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #42
+Status       : PASS
+Fold         : fold_4
+Windows dir  : windows_w1000_h100_minmax_f25
+Downsampled  : True
+Duration     : 5.4318s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_4 data/emglab/windows_w1000_h100_minmax_f25 --ds
+
+[STDOUT]
+
+=== Train set (downsampled) ===
+  Total windows   : 67,813
+  Window length   : 936 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 21,709 windows
+    Normal       (1): 24,480 windows
+    Myopathy     (2): 21,624 windows
+
+=== Val set (downsampled) ===
+  Total windows   : 17,442
+  Window length   : 936 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 7,038 windows
+    Normal       (1): 3,060 windows
+    Myopathy     (2): 7,344 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 936])  dtype=torch.float32
+  labels        : [0, 2, 1, 2, 0, 0, 2, 0]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #43
+Status       : PASS
+Fold         : fold_4
+Windows dir  : windows_w100_h100
+Downsampled  : False
+Duration     : 9.4656s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_4 data/emglab/windows_w100_h100
+
+[STDOUT]
+
+=== Train set (raw) ===
+  Total windows   : 73,798
+  Window length   : 2344 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 23,626 windows
+    Normal       (1): 26,640 windows
+    Myopathy     (2): 23,532 windows
+
+=== Val set (raw) ===
+  Total windows   : 18,981
+  Window length   : 2344 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 7,659 windows
+    Normal       (1): 3,330 windows
+    Myopathy     (2): 7,992 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 2344])  dtype=torch.float32
+  labels        : [1, 0, 0, 0, 1, 0, 1, 2]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #44
+Status       : PASS
+Fold         : fold_4
+Windows dir  : windows_w100_h100_minmax_f25
+Downsampled  : True
+Duration     : 3.2360s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_4 data/emglab/windows_w100_h100_minmax_f25 --ds
+
+[STDOUT]
+
+=== Train set (downsampled) ===
+  Total windows   : 73,798
+  Window length   : 92 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 23,626 windows
+    Normal       (1): 26,640 windows
+    Myopathy     (2): 23,532 windows
+
+=== Val set (downsampled) ===
+  Total windows   : 18,981
+  Window length   : 92 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 7,659 windows
+    Normal       (1): 3,330 windows
+    Myopathy     (2): 7,992 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 92])  dtype=torch.float32
+  labels        : [1, 1, 1, 1, 0, 1, 0, 0]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #45
+Status       : PASS
+Fold         : fold_4
+Windows dir  : windows_w2000_h100
+Downsampled  : False
+Duration     : 101.7691s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_4 data/emglab/windows_w2000_h100
+
+[STDOUT]
+
+=== Train set (raw) ===
+  Total windows   : 61,163
+  Window length   : 46876 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 19,579 windows
+    Normal       (1): 22,080 windows
+    Myopathy     (2): 19,504 windows
+
+=== Val set (raw) ===
+  Total windows   : 15,732
+  Window length   : 46876 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 6,348 windows
+    Normal       (1): 2,760 windows
+    Myopathy     (2): 6,624 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 46876])  dtype=torch.float32
+  labels        : [2, 0, 2, 0, 0, 1, 0, 1]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #46
+Status       : PASS
+Fold         : fold_4
+Windows dir  : windows_w2000_h100_minmax_f25
+Downsampled  : True
+Duration     : 7.3782s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_4 data/emglab/windows_w2000_h100_minmax_f25 --ds
+
+[STDOUT]
+
+=== Train set (downsampled) ===
+  Total windows   : 61,163
+  Window length   : 1874 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 19,579 windows
+    Normal       (1): 22,080 windows
+    Myopathy     (2): 19,504 windows
+
+=== Val set (downsampled) ===
+  Total windows   : 15,732
+  Window length   : 1874 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 6,348 windows
+    Normal       (1): 2,760 windows
+    Myopathy     (2): 6,624 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 1874])  dtype=torch.float32
+  labels        : [2, 2, 2, 0, 1, 0, 0, 0]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #47
+Status       : PASS
+Fold         : fold_4
+Windows dir  : windows_w400_h100
+Downsampled  : False
+Duration     : 14.3248s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_4 data/emglab/windows_w400_h100
+
+[STDOUT]
+
+=== Train set (raw) ===
+  Total windows   : 71,803
+  Window length   : 9375 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 22,987 windows
+    Normal       (1): 25,920 windows
+    Myopathy     (2): 22,896 windows
+
+=== Val set (raw) ===
+  Total windows   : 18,468
+  Window length   : 9375 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 7,452 windows
+    Normal       (1): 3,240 windows
+    Myopathy     (2): 7,776 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 9375])  dtype=torch.float32
+  labels        : [2, 1, 1, 0, 1, 1, 1, 2]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #48
+Status       : PASS
+Fold         : fold_4
+Windows dir  : windows_w400_h100_minmax_f25
+Downsampled  : True
+Duration     : 4.1630s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_4 data/emglab/windows_w400_h100_minmax_f25 --ds
+
+[STDOUT]
+
+=== Train set (downsampled) ===
+  Total windows   : 71,803
+  Window length   : 374 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 22,987 windows
+    Normal       (1): 25,920 windows
+    Myopathy     (2): 22,896 windows
+
+=== Val set (downsampled) ===
+  Total windows   : 18,468
+  Window length   : 374 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 7,452 windows
+    Normal       (1): 3,240 windows
+    Myopathy     (2): 7,776 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 374])  dtype=torch.float32
+  labels        : [0, 1, 1, 0, 1, 0, 1, 2]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #49
+Status       : PASS
+Fold         : fold_4
+Windows dir  : windows_w500_h100
+Downsampled  : False
+Duration     : 32.2425s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_4 data/emglab/windows_w500_h100
+
+[STDOUT]
+
+=== Train set (raw) ===
+  Total windows   : 71,138
+  Window length   : 11719 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 22,774 windows
+    Normal       (1): 25,680 windows
+    Myopathy     (2): 22,684 windows
+
+=== Val set (raw) ===
+  Total windows   : 18,297
+  Window length   : 11719 samples
+  Use downsampled : False
+  Class distribution:
+    ALS          (0): 7,383 windows
+    Normal       (1): 3,210 windows
+    Myopathy     (2): 7,704 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 11719])  dtype=torch.float32
+  labels        : [1, 0, 2, 2, 2, 0, 1, 1]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
+Run #50
+Status       : PASS
+Fold         : fold_4
+Windows dir  : windows_w500_h100_minmax_f25
+Downsampled  : True
+Duration     : 4.4813s
+Return code  : 0
+Command      : /home/awibisono1/venvs/nemg/bin/python nemg/dataset/dataset.py data/emglab/splits/fold_4 data/emglab/windows_w500_h100_minmax_f25 --ds
+
+[STDOUT]
+
+=== Train set (downsampled) ===
+  Total windows   : 71,138
+  Window length   : 468 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 22,774 windows
+    Normal       (1): 25,680 windows
+    Myopathy     (2): 22,684 windows
+
+=== Val set (downsampled) ===
+  Total windows   : 18,297
+  Window length   : 468 samples
+  Use downsampled : True
+  Class distribution:
+    ALS          (0): 7,383 windows
+    Normal       (1): 3,210 windows
+    Myopathy     (2): 7,704 windows
+
+=== Checking first batch ===
+  windows shape : torch.Size([8, 468])  dtype=torch.float32
+  labels        : [2, 0, 2, 2, 1, 2, 1, 1]
+
+All checks passed.
+
+[STDERR]
+<empty>
+
+----------------------------------------------------------------------------------------------------
