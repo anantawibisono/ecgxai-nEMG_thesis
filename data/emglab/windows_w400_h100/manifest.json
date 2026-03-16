@@ -5,8 +5,8 @@
   "hop_ms": 100.0,
   "recursive": false,
   "num_files_seen": 929,
-  "num_ok": 919,
-  "num_skipped": 10,
+  "num_ok": 929,
+  "num_skipped": 0,
   "num_errors": 0,
   "errors": []
 }
