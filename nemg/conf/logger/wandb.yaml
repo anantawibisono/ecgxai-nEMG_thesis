@@ -1,0 +1,5 @@
+use_wandb: true
+project: nemg-vae
+entity: null
+mode: online
+watch_model: false

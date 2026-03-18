@@ -1,0 +1,50 @@
+#!/bin/bash
+#SBATCH --job-name=simple_vae
+#SBATCH --partition=gpu_mig
+#SBATCH --gpus=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=9
+#SBATCH --time=08:00:00
+#SBATCH --chdir=/home/awibisono1/FactorEMG/nemg/experiments/job_files
+#SBATCH --output=job_log/%x_%j.out
+#SBATCH --error=job_log/%x_%j.err
+
+set -euo pipefail
+
+module purge
+module load 2025
+module load Anaconda3/2025.06-1
+
+source ~/venvs/nemg/bin/activate
+
+mkdir -p job_log
+
+export PYTHONUNBUFFERED=1
+export HYDRA_FULL_ERROR=1
+export WANDB_MODE=offline
+
+REPO_ROOT="/home/awibisono1/FactorEMG"
+cd "${REPO_ROOT}"
+
+echo "========== JOB INFO =========="
+echo "HOSTNAME: $(hostname)"
+echo "DATE: $(date)"
+echo "PWD: $(pwd)"
+echo "PYTHON: $(which python)"
+echo "CUDA_VISIBLE_DEVICES: ${CUDA_VISIBLE_DEVICES:-not_set}"
+echo "=============================="
+
+nvidia-smi || true
+
+srun python -m nemg.experiments.simple_vae.train \
+  experiment_name=simple_ae \
+  data.batch_size=16 \
+  model.latent_dim=32 \
+  model.beta=0.0 \
+  model.beta_warmup_epochs=0 \
+  trainer.epochs=350 \
+  trainer.lr=1e-5
+  trainer.plot_recons_every_n_epochs=50 \
+  trainer.num_plot_examples=3 \
+  trainer.device=cuda \
+  logger=none

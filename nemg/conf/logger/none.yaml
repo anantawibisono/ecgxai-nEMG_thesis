@@ -1,0 +1,5 @@
+use_wandb: false
+project: null
+entity: null
+mode: disabled
+watch_model: false

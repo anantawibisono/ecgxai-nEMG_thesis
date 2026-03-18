@@ -1,0 +1,9 @@
+epochs: 50
+lr: 1e-4
+weight_decay: 0.0
+device: auto
+grad_clip_norm: null
+max_train_batches: null
+max_val_batches: null
+plot_recons_every_n_epochs: 50
+num_plot_examples: 3

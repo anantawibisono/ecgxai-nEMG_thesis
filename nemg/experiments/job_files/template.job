@@ -7,7 +7,7 @@
 #SBATCH --time=04:00:00
 
 # make experiments the working directory
-#SBATCH --chdir=/home/awibisono1/ecgxai/nemg/experiments/job_files
+#SBATCH --chdir=/home/awibisono1/FactorEMG/nemg/experiments/job_files
 
 # save logs inside experiments/job_log
 #SBATCH --output=job_log/%x_%j.out
@@ -20,5 +20,5 @@ module load Anaconda3/2025.06-1
 # activate env here
 source ~/venvs/nemg/bin/activate
 
-cd /home/awibisono1/ecgxai/nemg/experiments
-srun git push
+cd /home/awibisono1/FactorEMG/nemg/experiments
+srun test.py

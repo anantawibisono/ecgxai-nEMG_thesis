@@ -1,0 +1,6 @@
+latent_dim: 32
+hidden_dim_1: 1024
+hidden_dim_2: 256
+
+beta: 1.0
+beta_warmup_epochs: 10

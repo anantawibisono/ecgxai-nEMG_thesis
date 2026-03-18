@@ -1,0 +1,9 @@
+fold_dir: data/emglab/splits/fold_0
+windows_dir: data/emglab/windows_w400_h100
+use_downsampled: false
+
+batch_size: 128
+num_workers: 4
+pin_memory: true
+drop_last_train: true
+cache: true
