@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --job-name=simple_vae
-#SBATCH --partition=gpu_mig
+#SBATCH --job-name=conv1d_FDD_loss
+#SBATCH --partition=gpu_a100
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=9
@@ -36,15 +36,15 @@ echo "=============================="
 
 nvidia-smi || true
 
-srun python -m nemg.experiments.simple_vae.train \
-  experiment_name=simple_ae \
-  data.batch_size=16 \
-  model.latent_dim=32 \
-  model.beta=0.0 \
+srun python -m nemg.experiments.conv1d_beta_vae.train \
+  experiment_name=conv1d_FDD_loss \
+  model=conv1d_beta_vae \
+  model.beta=0.00 \
   model.beta_warmup_epochs=0 \
-  trainer.epochs=350 \
-  trainer.lr=1e-5
-  trainer.plot_recons_every_n_epochs=50 \
-  trainer.num_plot_examples=3 \
+  model.latent_dim=16 \
+  trainer.epochs=200 \
+  trainer.lr=3e-4 \
+  data.batch_size=32 \
   trainer.device=cuda \
+  trainer.plot_recons_every_n_epochs=50 \
   logger=none

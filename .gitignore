@@ -139,3 +139,4 @@ nemg/experiments/job_files/job_log/
 nemg/experiments/job_files/job_log_past/
 wandb/
 outputs/
+multirun/

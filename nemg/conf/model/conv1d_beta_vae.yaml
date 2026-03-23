@@ -1,4 +1,4 @@
-latent_dim: 16
+latent_dim: 32
 channels: [32, 64, 128]
 kernel_size: 7
 stride: 2

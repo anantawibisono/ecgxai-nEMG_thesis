@@ -119,6 +119,9 @@ class Conv1DBetaVAE(nn.Module):
         h = self.fc_hidden(h)
         mu = self.mu_layer(h)
         logvar = self.logvar_layer(h)
+    
+        # Prevent numerical explosion in exp(0.5 * logvar)
+        logvar = torch.clamp(logvar, min=-10.0, max=10.0)
         return mu, logvar
 
     def reparameterize(self, mu: torch.Tensor, logvar: torch.Tensor) -> torch.Tensor:

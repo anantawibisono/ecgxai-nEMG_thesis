@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=simple_vae_bs8_lr1e-5
+#SBATCH --job-name=van_de_leur_debug
 #SBATCH --partition=gpu_a100
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
@@ -36,15 +36,16 @@ echo "=============================="
 
 nvidia-smi || true
 
-srun python -m nemg.experiments.simple_vae.train \
-  experiment_name=simple_ae \
-  data.batch_size=32 \
-  model.latent_dim=32 \
-  model.beta=0.0 \
+srun python -m nemg.experiments.van_de_leur_model.train \
+  experiment_name=van_de_leur_model_debug \
+  model=van_de_leur_model \
+  model.beta=0.00 \
   model.beta_warmup_epochs=0 \
-  trainer.epochs=150 \
-  trainer.lr=1e-4 \
-  trainer.plot_recons_every_n_epochs=50 \
-  trainer.num_plot_examples=3 \
+  model.latent_dim=21 \
+  model.gaussian_out=false \
+  trainer.epochs=50 \
+  trainer.lr=3e-4 \
+  data.batch_size=32 \
   trainer.device=cuda \
+  trainer.plot_recons_every_n_epochs=10 \
   logger=none

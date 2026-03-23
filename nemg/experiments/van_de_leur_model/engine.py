@@ -6,16 +6,35 @@ import time
 import torch
 from torch.nn.utils import clip_grad_norm_
 
-from nemg.experiments.simple_vae.losses import vae_loss
+from nemg.experiments.van_de_leur_model.losses import vae_loss
+
 
 def _to_float_dict(d: dict[str, Any]) -> dict[str, float]:
     out: dict[str, float] = {}
     for k, v in d.items():
-        if hasattr(v, "item"):
-            out[k] = float(v.item())
-        else:
-            out[k] = float(v)
+        out[k] = float(v.item()) if hasattr(v, "item") else float(v)
     return out
+
+
+def _forward_vae(model: torch.nn.Module, x: torch.Tensor):
+    try:
+        out = model(x, return_decoder_stats=True)
+    except TypeError:
+        out = model(x)
+
+    if not isinstance(out, tuple):
+        raise TypeError(f"Expected tuple output from VAE model, got {type(out)!r}")
+
+    if len(out) == 3:
+        x_hat, mu, logvar = out
+        recon_std = None
+    elif len(out) == 4:
+        x_hat, mu, logvar, recon_std = out
+    else:
+        raise ValueError(f"Unexpected number of outputs from model: {len(out)}")
+
+    recon_loss_type = getattr(model, "recon_loss_type", "mse")
+    return x_hat, mu, logvar, recon_std, recon_loss_type
 
 
 def train_one_epoch(
@@ -31,29 +50,24 @@ def train_one_epoch(
 ) -> dict[str, float]:
     model.train()
     metrics.reset()
-
     start_time = time.time()
 
     for batch_idx, (x, _) in enumerate(loader):
         if max_batches is not None and batch_idx >= max_batches:
             break
 
-        # if batch_idx % print_every == 0:
-        #     print(f"[train] batch {batch_idx}/{len(loader)}")
-
         x = x.to(device, non_blocking=True).float()
-
         optimizer.zero_grad(set_to_none=True)
 
-        x_hat, mu, logvar = model(x)
+        x_hat, mu, logvar, recon_std, recon_loss_type = _forward_vae(model, x)
         loss, recon, kl = vae_loss(
             x,
             x_hat,
             mu,
             logvar,
-            beta,
-            recon_loss="fdd",
-            lambda_fdd=1.0,
+            beta=beta,
+            recon_std=recon_std,
+            recon_loss_type=recon_loss_type,
         )
 
         if not torch.isfinite(loss):
@@ -63,10 +77,8 @@ def train_one_epoch(
             )
 
         loss.backward()
-
         if grad_clip_norm is not None:
             clip_grad_norm_(model.parameters(), grad_clip_norm)
-
         optimizer.step()
 
         metrics["loss"].update(loss.detach())
@@ -91,27 +103,22 @@ def validate(
 ) -> dict[str, float]:
     model.eval()
     metrics.reset()
-
     start_time = time.time()
 
     for batch_idx, (x, _) in enumerate(loader):
         if max_batches is not None and batch_idx >= max_batches:
             break
 
-        # if batch_idx % print_every == 0:
-        #     print(f"[val] batch {batch_idx}/{len(loader)}")
-
         x = x.to(device, non_blocking=True).float()
-
-        x_hat, mu, logvar = model(x)
+        x_hat, mu, logvar, recon_std, recon_loss_type = _forward_vae(model, x)
         loss, recon, kl = vae_loss(
             x,
             x_hat,
             mu,
             logvar,
-            beta,
-            recon_loss="fdd",
-            lambda_fdd=1.0,
+            beta=beta,
+            recon_std=recon_std,
+            recon_loss_type=recon_loss_type,
         )
 
         if not torch.isfinite(loss):
