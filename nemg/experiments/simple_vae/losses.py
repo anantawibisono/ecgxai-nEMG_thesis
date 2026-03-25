@@ -63,7 +63,7 @@ def vae_loss(
     mu: torch.Tensor,
     logvar: torch.Tensor,
     beta: float,
-    recon_loss: Literal["mse", "fdd"] = "mse",
+    recon_loss: Literal["mse", "fdd"] = "fdd",
     lambda_fdd: float = 1.0,
     eps: float = 1e-8,
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:

@@ -33,7 +33,7 @@ def _forward_vae(model: torch.nn.Module, x: torch.Tensor):
     else:
         raise ValueError(f"Unexpected number of outputs from model: {len(out)}")
 
-    recon_loss_type = getattr(model, "recon_loss_type", "mse")
+    recon_loss_type = getattr(model, "recon_loss_type", "fdd")
     return x_hat, mu, logvar, recon_std, recon_loss_type
 
 
@@ -111,6 +111,14 @@ def validate(
 
         x = x.to(device, non_blocking=True).float()
         x_hat, mu, logvar, recon_std, recon_loss_type = _forward_vae(model, x)
+
+        if recon_std is not None and batch_idx == 0:
+            print(
+                f"recon_std mean={recon_std.mean().item():.6f} "
+                f"min={recon_std.min().item():.6f} "
+                f"max={recon_std.max().item():.6f}"
+            )
+
         loss, recon, kl = vae_loss(
             x,
             x_hat,

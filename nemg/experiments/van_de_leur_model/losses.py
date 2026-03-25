@@ -21,18 +21,21 @@ def gaussian_recon_loss(
     x: torch.Tensor,
     recon_mean: torch.Tensor,
     recon_std: torch.Tensor,
-    eps: float = 1.0e-6,
+    min_std: float = 5.0e-2,
+    max_std: float = 1.0,
 ) -> torch.Tensor:
     x = x.flatten(start_dim=1)
     recon_mean = recon_mean.flatten(start_dim=1)
-    recon_std = recon_std.flatten(start_dim=1).clamp_min(eps)
+    recon_std = recon_std.flatten(start_dim=1).clamp(min=min_std, max=max_std)
 
     nll = (
         0.5 * math.log(2.0 * math.pi)
         + torch.log(recon_std)
         + 0.5 * ((x - recon_mean) / recon_std).pow(2)
     )
-    return nll.sum(dim=1).mean()
+
+    # mean over sequence, then mean over batch
+    return nll.mean(dim=1).mean()
 
 
 def vae_loss(

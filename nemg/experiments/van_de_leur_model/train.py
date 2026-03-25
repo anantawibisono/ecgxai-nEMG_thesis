@@ -15,7 +15,7 @@ from nemg.dataset.dataset import build_dataloaders
 from nemg.experiments.simple_vae.metrics import build_metrics
 from nemg.experiments.simple_vae.utils import count_parameters, resolve_device, set_seed
 from nemg.experiments.van_de_leur_model.engine import train_one_epoch, validate
-from nemg.experiments.van_de_leur_model.losses import beta_for_epoch
+from nemg.experiments.simple_vae.losses import beta_for_epoch
 from nemg.experiments.van_de_leur_model.model import Conv1DBetaVAE
 
 
@@ -38,6 +38,25 @@ def save_reconstruction_plot(model, loader, device, save_path: Path, n: int = 3)
         ax.plot(x_hat[i].numpy(), label="recon")
         ax.set_title(f"Sample {i}")
         ax.legend(loc="upper right")
+
+    fig.tight_layout()
+    save_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(save_path, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+
+
+def save_loss_plot(history: dict, save_path: Path) -> None:
+    epochs = range(1, len(history["train_loss"]) + 1)
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.plot(epochs, history["train_loss"], label="train loss")
+    ax.plot(epochs, history["val_loss"], label="val loss")
+
+    ax.set_xlabel("Epoch")
+    ax.set_ylabel("Loss")
+    ax.set_title("Training and Validation Loss")
+    ax.grid(True, alpha=0.3)
+    ax.legend()
 
     fig.tight_layout()
     save_path.parent.mkdir(parents=True, exist_ok=True)
@@ -104,11 +123,23 @@ def main(cfg: DictConfig) -> None:
     output_dir = Path(HydraConfig.get().runtime.output_dir)
     ckpt_dir = output_dir / "checkpoints"
     recon_dir = output_dir / "reconstructions"
+    plots_dir = output_dir / "plots"
     ckpt_dir.mkdir(parents=True, exist_ok=True)
     recon_dir.mkdir(parents=True, exist_ok=True)
+    plots_dir.mkdir(parents=True, exist_ok=True)
 
     best_val_loss = float("inf")
     best_ckpt_path = ckpt_dir / "best.pt"
+
+    early_stopping_patience = cfg.trainer.get("early_stopping_patience", None)
+    early_stopping_min_delta = cfg.trainer.get("early_stopping_min_delta", 0.0)
+    epochs_without_improvement = 0
+    best_epoch = 0
+
+    history = {
+        "train_loss": [],
+        "val_loss": [],
+    }
 
     print(f"Device: {device}")
     print(f"Input dim: {input_dim}")
@@ -137,6 +168,9 @@ def main(cfg: DictConfig) -> None:
             beta=beta,
             max_batches=cfg.trainer.max_val_batches,
         )
+
+        history["train_loss"].append(train_stats["loss"])
+        history["val_loss"].append(val_stats["loss"])
 
         epoch_time = time.time() - epoch_start
         log_dict = {
@@ -169,8 +203,12 @@ def main(cfg: DictConfig) -> None:
             ckpt_dir / "last.pt",
         )
 
-        if val_stats["loss"] < best_val_loss:
+        improved = val_stats["loss"] < (best_val_loss - early_stopping_min_delta)
+
+        if improved:
             best_val_loss = val_stats["loss"]
+            best_epoch = epoch
+            epochs_without_improvement = 0
             torch.save(
                 {
                     "epoch": epoch,
@@ -181,6 +219,8 @@ def main(cfg: DictConfig) -> None:
                 },
                 best_ckpt_path,
             )
+        else:
+            epochs_without_improvement += 1
 
         if (
             cfg.trainer.plot_recons_every_n_epochs is not None
@@ -195,7 +235,30 @@ def main(cfg: DictConfig) -> None:
             )
 
         if run is not None:
-            run.log(log_dict)
+            run.log({
+                **log_dict,
+                "early_stopping/epochs_without_improvement": epochs_without_improvement,
+                "early_stopping/best_val_loss": best_val_loss,
+                "early_stopping/best_epoch": best_epoch,
+            })
+
+        if (
+            early_stopping_patience is not None
+            and epochs_without_improvement >= early_stopping_patience
+        ):
+            print(
+                f"Early stopping triggered at epoch {epoch}. "
+                f"Best epoch was {best_epoch} with val_loss={best_val_loss:.6f}."
+            )
+            break
+
+    if best_ckpt_path.exists():
+        best_ckpt = torch.load(best_ckpt_path, map_location=device)
+        model.load_state_dict(best_ckpt["model_state_dict"])
+        print(
+            f"Loaded best checkpoint from epoch {best_ckpt['epoch']} "
+            f"with val_loss={best_val_loss:.6f}"
+        )
 
     save_reconstruction_plot(
         model,
@@ -203,6 +266,11 @@ def main(cfg: DictConfig) -> None:
         device,
         recon_dir / "final.png",
         n=cfg.trainer.num_plot_examples,
+    )
+
+    save_loss_plot(
+        history,
+        plots_dir / "loss_curve.png",
     )
 
     if run is not None:

@@ -45,6 +45,29 @@ def save_reconstruction_plot(model, loader, device, save_path: Path, n: int = 3)
     plt.close(fig)
 
 
+def save_loss_plot(
+    train_losses: list[float],
+    val_losses: list[float],
+    save_path: Path,
+    title: str = "Training and Validation Loss",
+) -> None:
+    epochs = list(range(1, len(train_losses) + 1))
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.plot(epochs, train_losses, label="train loss")
+    ax.plot(epochs, val_losses, label="val loss")
+    ax.set_title(title)
+    ax.set_xlabel("Epoch")
+    ax.set_ylabel("Loss")
+    ax.legend()
+    ax.grid(True, alpha=0.3)
+
+    save_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.tight_layout()
+    fig.savefig(save_path, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+
+
 def maybe_init_wandb(cfg: DictConfig):
     if not cfg.logger.use_wandb:
         return None
@@ -100,11 +123,16 @@ def main(cfg: DictConfig) -> None:
     output_dir = Path(HydraConfig.get().runtime.output_dir)
     ckpt_dir = output_dir / "checkpoints"
     recon_dir = output_dir / "reconstructions"
+    plot_dir = output_dir / "plots"
     ckpt_dir.mkdir(parents=True, exist_ok=True)
     recon_dir.mkdir(parents=True, exist_ok=True)
+    plot_dir.mkdir(parents=True, exist_ok=True)
 
     best_val_loss = float("inf")
     best_ckpt_path = ckpt_dir / "best.pt"
+
+    train_loss_history: list[float] = []
+    val_loss_history: list[float] = []
 
     print(f"Device: {device}")
     print(f"Input dim: {input_dim}")
@@ -142,6 +170,9 @@ def main(cfg: DictConfig) -> None:
             **{f"train/{k}": v for k, v in train_stats.items()},
             **{f"val/{k}": v for k, v in val_stats.items()},
         }
+
+        train_loss_history.append(float(train_stats["loss"]))
+        val_loss_history.append(float(val_stats["loss"]))
 
         print(
             f"Epoch {epoch:03d} | beta={beta:.4f} | "
@@ -190,6 +221,13 @@ def main(cfg: DictConfig) -> None:
                 n=cfg.trainer.num_plot_examples,
             )
 
+        # update loss plot every epoch
+        save_loss_plot(
+            train_losses=train_loss_history,
+            val_losses=val_loss_history,
+            save_path=plot_dir / "train_val_loss.png",
+        )
+
         if run is not None:
             run.log(log_dict)
 
@@ -199,6 +237,12 @@ def main(cfg: DictConfig) -> None:
         device,
         recon_dir / "final.png",
         n=cfg.trainer.num_plot_examples,
+    )
+
+    save_loss_plot(
+        train_losses=train_loss_history,
+        val_losses=val_loss_history,
+        save_path=plot_dir / "train_val_loss_final.png",
     )
 
     if run is not None:

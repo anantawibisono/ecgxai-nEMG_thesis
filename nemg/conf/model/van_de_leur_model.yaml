@@ -8,7 +8,7 @@ depth: 7
 reduced_size: 64
 decoder_in_channels: 64
 kernel_size: 5
-softplus_eps: 1.0e-4
+softplus_eps: 1.0e-2
 dropout: 0.0
 gaussian_out: true
 beta: 32.0

@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=van_de_leur_debug
+#SBATCH --job-name=van_de_leur_FDD_loss
 #SBATCH --partition=gpu_a100
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
@@ -37,14 +37,14 @@ echo "=============================="
 nvidia-smi || true
 
 srun python -m nemg.experiments.van_de_leur_model.train \
-  experiment_name=van_de_leur_model_debug \
+  experiment_name=van_de_leur_model_FDD_loss \
   model=van_de_leur_model \
-  model.beta=0.00 \
+  model.beta=0.0 \
   model.beta_warmup_epochs=0 \
-  model.latent_dim=21 \
+  model.latent_dim=32 \
   model.gaussian_out=false \
-  trainer.epochs=50 \
-  trainer.lr=3e-4 \
+  trainer.epochs=160 \
+  trainer.lr=1e-4 \
   data.batch_size=32 \
   trainer.device=cuda \
   trainer.plot_recons_every_n_epochs=10 \

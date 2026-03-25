@@ -42,9 +42,9 @@ srun python -m nemg.experiments.conv1d_beta_vae.train \
   model.beta=0.00 \
   model.beta_warmup_epochs=0 \
   model.latent_dim=16 \
-  trainer.epochs=200 \
+  trainer.epochs=50 \
   trainer.lr=3e-4 \
   data.batch_size=32 \
   trainer.device=cuda \
-  trainer.plot_recons_every_n_epochs=50 \
+  trainer.plot_recons_every_n_epochs=5 \
   logger=none
