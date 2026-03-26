@@ -15,7 +15,7 @@ from nemg.dataset.dataset import build_dataloaders
 from nemg.experiments.simple_vae.metrics import build_metrics
 from nemg.experiments.simple_vae.utils import count_parameters, resolve_device, set_seed
 from nemg.experiments.van_de_leur_model.engine import train_one_epoch, validate
-from nemg.experiments.simple_vae.losses import beta_for_epoch
+from nemg.experiments.van_de_leur_model.losses import beta_for_epoch
 from nemg.experiments.van_de_leur_model.model import Conv1DBetaVAE
 
 
@@ -45,7 +45,7 @@ def save_reconstruction_plot(model, loader, device, save_path: Path, n: int = 3)
     plt.close(fig)
 
 
-def save_loss_plot(history: dict, save_path: Path) -> None:
+def save_loss_plot(history: dict, save_path: Path, epoch: int | None = None) -> None:
     epochs = range(1, len(history["train_loss"]) + 1)
 
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -54,7 +54,10 @@ def save_loss_plot(history: dict, save_path: Path) -> None:
 
     ax.set_xlabel("Epoch")
     ax.set_ylabel("Loss")
-    ax.set_title("Training and Validation Loss")
+    if epoch is None:
+        ax.set_title("Training and Validation Loss")
+    else:
+        ax.set_title(f"Training and Validation Loss (up to epoch {epoch})")
     ax.grid(True, alpha=0.3)
     ax.legend()
 
@@ -172,6 +175,9 @@ def main(cfg: DictConfig) -> None:
         history["train_loss"].append(train_stats["loss"])
         history["val_loss"].append(val_stats["loss"])
 
+        # Save/update loss plots every epoch
+        save_loss_plot(history, plots_dir / "loss_curve.png", epoch=epoch)
+
         epoch_time = time.time() - epoch_start
         log_dict = {
             "epoch": epoch,
@@ -270,7 +276,7 @@ def main(cfg: DictConfig) -> None:
 
     save_loss_plot(
         history,
-        plots_dir / "loss_curve.png",
+        plots_dir / "loss_curve_final.png",
     )
 
     if run is not None:

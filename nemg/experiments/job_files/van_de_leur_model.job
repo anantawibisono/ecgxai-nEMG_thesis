@@ -43,7 +43,9 @@ srun python -m nemg.experiments.van_de_leur_model.train \
   model.beta_warmup_epochs=0 \
   model.latent_dim=32 \
   model.gaussian_out=false \
-  trainer.epochs=160 \
+  model.recon_loss_type=fdd \
+  model.lambda_fdd=1.0 \
+  trainer.epochs=100 \
   trainer.lr=1e-4 \
   data.batch_size=32 \
   trainer.device=cuda \

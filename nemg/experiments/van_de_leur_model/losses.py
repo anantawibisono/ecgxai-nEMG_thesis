@@ -38,6 +38,30 @@ def gaussian_recon_loss(
     return nll.mean(dim=1).mean()
 
 
+def fdd_recon_loss(
+    x: torch.Tensor,
+    x_hat: torch.Tensor,
+    lambda_fdd: float = 1.0,
+    eps: float = 1.0e-8,
+) -> torch.Tensor:
+    """
+    FDD reconstruction loss:
+        MSE + lambda_fdd * ((1 - cosine_similarity) / 2)
+
+    Notes:
+    - Flatten per sample so cosine similarity is computed over the full waveform.
+    - ((1 - cos) / 2) maps cosine similarity from [-1, 1] into [0, 1].
+    """
+    x = x.flatten(start_dim=1)
+    x_hat = x_hat.flatten(start_dim=1)
+
+    mse = F.mse_loss(x_hat, x, reduction="mean")
+    cos_sim = F.cosine_similarity(x_hat, x, dim=1, eps=eps)
+    cos_term = ((1.0 - cos_sim) / 2.0).mean()
+
+    return mse + lambda_fdd * cos_term
+
+
 def vae_loss(
     x: torch.Tensor,
     x_hat: torch.Tensor,
@@ -46,13 +70,19 @@ def vae_loss(
     beta: float,
     recon_std: torch.Tensor | None = None,
     recon_loss_type: str = "mse",
+    lambda_fdd: float = 1.0,
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     if recon_loss_type == "gaussian":
         if recon_std is None:
             raise ValueError("recon_std must be provided when recon_loss_type='gaussian'")
         recon = gaussian_recon_loss(x, x_hat, recon_std)
+
     elif recon_loss_type == "mse":
-        recon = F.mse_loss(x_hat, x, reduction="mean")
+        recon = fdd_recon_loss(x, x_hat, lambda_fdd=lambda_fdd)
+
+    elif recon_loss_type == "fdd":
+        recon = fdd_recon_loss(x, x_hat, lambda_fdd=lambda_fdd)
+
     else:
         raise ValueError(f"Unsupported recon_loss_type: {recon_loss_type}")
 

@@ -13,3 +13,5 @@ dropout: 0.0
 gaussian_out: true
 beta: 32.0
 beta_warmup_epochs: 10
+recon_loss_type: fdd
+lambda_fdd: 1.0

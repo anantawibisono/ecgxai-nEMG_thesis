@@ -34,7 +34,9 @@ def _forward_vae(model: torch.nn.Module, x: torch.Tensor):
         raise ValueError(f"Unexpected number of outputs from model: {len(out)}")
 
     recon_loss_type = getattr(model, "recon_loss_type", "fdd")
-    return x_hat, mu, logvar, recon_std, recon_loss_type
+    lambda_fdd = getattr(model, "lambda_fdd", 1.0)
+
+    return x_hat, mu, logvar, recon_std, recon_loss_type, lambda_fdd
 
 
 def train_one_epoch(
@@ -59,15 +61,17 @@ def train_one_epoch(
         x = x.to(device, non_blocking=True).float()
         optimizer.zero_grad(set_to_none=True)
 
-        x_hat, mu, logvar, recon_std, recon_loss_type = _forward_vae(model, x)
+        x_hat, mu, logvar, recon_std, recon_loss_type, lambda_fdd = _forward_vae(model, x)
+
         loss, recon, kl = vae_loss(
-            x,
-            x_hat,
-            mu,
-            logvar,
+            x=x,
+            x_hat=x_hat,
+            mu=mu,
+            logvar=logvar,
             beta=beta,
             recon_std=recon_std,
             recon_loss_type=recon_loss_type,
+            lambda_fdd=lambda_fdd,
         )
 
         if not torch.isfinite(loss):
@@ -110,7 +114,7 @@ def validate(
             break
 
         x = x.to(device, non_blocking=True).float()
-        x_hat, mu, logvar, recon_std, recon_loss_type = _forward_vae(model, x)
+        x_hat, mu, logvar, recon_std, recon_loss_type, lambda_fdd = _forward_vae(model, x)
 
         if recon_std is not None and batch_idx == 0:
             print(
@@ -120,13 +124,14 @@ def validate(
             )
 
         loss, recon, kl = vae_loss(
-            x,
-            x_hat,
-            mu,
-            logvar,
+            x=x,
+            x_hat=x_hat,
+            mu=mu,
+            logvar=logvar,
             beta=beta,
             recon_std=recon_std,
             recon_loss_type=recon_loss_type,
+            lambda_fdd=lambda_fdd,
         )
 
         if not torch.isfinite(loss):

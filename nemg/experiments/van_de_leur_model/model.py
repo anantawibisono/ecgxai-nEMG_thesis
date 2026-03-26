@@ -32,14 +32,6 @@ class SqueezeChannels(nn.Module):
 
 
 class CausalConvolutionBlock(nn.Module):
-    """
-    Residual causal block in the same style as ECGxAI / FactorECG.
-
-    Each block uses two causal convolutions (or transposed convolutions in the
-    decoder path), chomps the padded tail to preserve causality, and adds a
-    residual connection with a 1x1 projection when the channel count changes.
-    """
-
     def __init__(
         self,
         in_channels: int,
@@ -51,12 +43,6 @@ class CausalConvolutionBlock(nn.Module):
     ):
         super().__init__()
 
-        # In the original ECGxAI public repo the decoder path is instantiated
-        # with ConvTranspose1d. On recent PyTorch versions that shrinks the time
-        # dimension for stride=1 and breaks the residual addition. In this
-        # adaptation we keep the van de Leur-style *dilated residual backbone*
-        # but use same-length Conv1d blocks in both encoder and decoder, because
-        # the decoder already expands z back to full width with linear layers.
         Conv1d = nn.Conv1d
         padding = (kernel_size - 1) * dilation
 
@@ -92,13 +78,6 @@ class CausalConvolutionBlock(nn.Module):
 
 
 class CausalCNN(nn.Module):
-    """
-    Exponentially-dilated residual causal CNN.
-
-    The encoder doubles the dilation at each block. The decoder mirrors the same
-    skeleton with transposed convolutions and decreasing dilation.
-    """
-
     def __init__(
         self,
         in_channels: int,
@@ -234,21 +213,6 @@ class CausalCNNVDecoder(nn.Module):
 
 
 class Conv1DBetaVAE(nn.Module):
-    """
-    Van de Leur / FactorECG-style 1D beta-VAE adapted to the nEMG setup.
-
-    Compared with your original conv1d_beta_vae version:
-    - uses a residual dilated CausalCNN encoder/decoder backbone
-    - uses adaptive global pooling in the encoder instead of flattening all time steps
-    - predicts latent std with Softplus
-    - can optionally predict reconstruction mean + std for Gaussian reconstruction loss
-
-    Public interface:
-    - forward(x) -> (x_hat, mu, logvar)
-    - forward(x, return_decoder_stats=True) -> (x_hat, mu, logvar, recon_std)
-      when gaussian_out=True
-    """
-
     def __init__(
         self,
         input_dim: int,
@@ -261,13 +225,29 @@ class Conv1DBetaVAE(nn.Module):
         softplus_eps: float = 1.0e-4,
         dropout: float = 0.0,
         gaussian_out: bool = True,
+        recon_loss_type: str | None = None,
+        lambda_fdd: float = 1.0,
     ):
         super().__init__()
         self.input_dim = input_dim
         self.latent_dim = latent_dim
         self.softplus_eps = softplus_eps
         self.gaussian_out = gaussian_out
-        self.recon_loss_type = "gaussian" if gaussian_out else "mse"
+        self.lambda_fdd = lambda_fdd
+
+        if recon_loss_type is None:
+            self.recon_loss_type = "gaussian" if gaussian_out else "mse"
+        else:
+            self.recon_loss_type = recon_loss_type
+
+        if self.recon_loss_type == "gaussian" and not gaussian_out:
+            raise ValueError("recon_loss_type='gaussian' requires gaussian_out=True")
+
+        if self.recon_loss_type in {"mse", "fdd"} and gaussian_out:
+            print(
+                f"Warning: gaussian_out=True but recon_loss_type='{self.recon_loss_type}'. "
+                "recon_std will be produced by the decoder but ignored by the loss."
+            )
 
         self.encoder = CausalCNNVEncoder(
             in_channels=1,

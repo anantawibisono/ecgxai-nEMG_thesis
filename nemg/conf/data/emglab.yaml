@@ -1,6 +1,6 @@
 fold_dir: data/emglab/splits/fold_0
-windows_dir: data/emglab/windows_w100_h100
-use_downsampled: false
+windows_dir: data/emglab/windows_w100_h100_minmax_f25
+use_downsampled: true
 
 batch_size: 128
 num_workers: 4
