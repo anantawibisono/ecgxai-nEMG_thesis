@@ -1,6 +1,6 @@
 defaults:
   - data: emglab
-  - model: simple_vae
+  - model: van_de_leur_model
   - trainer: default
   - logger: none
   - _self_

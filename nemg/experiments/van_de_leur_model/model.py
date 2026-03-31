@@ -42,7 +42,6 @@ class CausalConvolutionBlock(nn.Module):
         forward: bool = True,
     ):
         super().__init__()
-
         Conv1d = nn.Conv1d
         padding = (kernel_size - 1) * dilation
 
@@ -88,7 +87,6 @@ class CausalCNN(nn.Module):
         forward: bool = True,
     ):
         super().__init__()
-
         layers: list[nn.Module] = []
         dilation_size = 1 if forward else 2**depth
 
@@ -137,7 +135,6 @@ class CausalCNNVEncoder(nn.Module):
         causal_cnn = CausalCNN(in_channels, channels, depth, reduced_size, kernel_size)
         reduce_size = nn.AdaptiveMaxPool1d(1)
         squeeze = SqueezeChannels()
-
         self.network = nn.Sequential(causal_cnn, reduce_size, squeeze)
         self.linear_mean = nn.Linear(reduced_size, out_channels)
         self.sd_output = sd_output
@@ -227,6 +224,10 @@ class Conv1DBetaVAE(nn.Module):
         gaussian_out: bool = True,
         recon_loss_type: str | None = None,
         lambda_fdd: float = 1.0,
+        lambda_cosine: float = 1.0,
+        lambda_spectral: float = 1.0,
+        huber_delta: float = 1.0,
+        spectral_use_log_magnitude: bool = False,
     ):
         super().__init__()
         self.input_dim = input_dim
@@ -234,6 +235,10 @@ class Conv1DBetaVAE(nn.Module):
         self.softplus_eps = softplus_eps
         self.gaussian_out = gaussian_out
         self.lambda_fdd = lambda_fdd
+        self.lambda_cosine = lambda_cosine
+        self.lambda_spectral = lambda_spectral
+        self.huber_delta = huber_delta
+        self.spectral_use_log_magnitude = spectral_use_log_magnitude
 
         if recon_loss_type is None:
             self.recon_loss_type = "gaussian" if gaussian_out else "mse"
@@ -243,7 +248,7 @@ class Conv1DBetaVAE(nn.Module):
         if self.recon_loss_type == "gaussian" and not gaussian_out:
             raise ValueError("recon_loss_type='gaussian' requires gaussian_out=True")
 
-        if self.recon_loss_type in {"mse", "fdd"} and gaussian_out:
+        if self.recon_loss_type in {"mse", "fdd", "huber_cosine", "mse_spectral"} and gaussian_out:
             print(
                 f"Warning: gaussian_out=True but recon_loss_type='{self.recon_loss_type}'. "
                 "recon_std will be produced by the decoder but ignored by the loss."
@@ -310,13 +315,11 @@ class Conv1DBetaVAE(nn.Module):
         return_std: bool = False,
     ) -> torch.Tensor | tuple[torch.Tensor, torch.Tensor]:
         out = self.decoder(z)
-
         if self.gaussian_out:
             mean, sd = out
             mean = self._crop_or_pad(mean).squeeze(1)
             sd = self._crop_or_pad(sd).squeeze(1).clamp_min(self.softplus_eps)
             return (mean, sd) if return_std else mean
-
         x_hat = self._crop_or_pad(out).squeeze(1)
         return x_hat
 
@@ -324,7 +327,10 @@ class Conv1DBetaVAE(nn.Module):
         self,
         x: torch.Tensor,
         return_decoder_stats: bool = False,
-    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor] | tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    ) -> (
+        tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+        | tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]
+    ):
         mu, _sd, logvar = self.encode_distribution(x)
         z = self.reparameterize(mu, logvar)
 

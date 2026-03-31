@@ -1,7 +1,6 @@
 # nemg/conf/model/van_de_leur_model.yaml
 # FactorECG / van de Leur-style causal dilated beta-VAE settings,
 # adapted for the single-channel nEMG experiment folder.
-
 latent_dim: 21
 channels: 128
 depth: 7
@@ -15,3 +14,7 @@ beta: 32.0
 beta_warmup_epochs: 10
 recon_loss_type: fdd
 lambda_fdd: 1.0
+lambda_cosine: 0.25
+lambda_spectral: 0.25
+huber_delta: 1.0
+spectral_use_log_magnitude: false

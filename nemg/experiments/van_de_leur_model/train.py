@@ -5,7 +5,9 @@ from pathlib import Path
 
 import hydra
 import matplotlib
+
 matplotlib.use("Agg")
+
 import matplotlib.pyplot as plt
 import torch
 from hydra.core.hydra_config import HydraConfig
@@ -25,21 +27,19 @@ def save_reconstruction_plot(model, loader, device, save_path: Path, n: int = 3)
     x, _ = next(iter(loader))
     x = x.to(device).float()
     x_hat, _, _ = model(x)
-
     x = x.cpu()
     x_hat = x_hat.cpu()
 
     n = min(n, x.size(0))
     fig, axes = plt.subplots(n, 1, figsize=(12, 3 * n), squeeze=False)
-
     for i in range(n):
         ax = axes[i, 0]
         ax.plot(x[i].numpy(), label="input")
         ax.plot(x_hat[i].numpy(), label="recon")
         ax.set_title(f"Sample {i}")
         ax.legend(loc="upper right")
-
     fig.tight_layout()
+
     save_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(save_path, dpi=150, bbox_inches="tight")
     plt.close(fig)
@@ -47,21 +47,21 @@ def save_reconstruction_plot(model, loader, device, save_path: Path, n: int = 3)
 
 def save_loss_plot(history: dict, save_path: Path, epoch: int | None = None) -> None:
     epochs = range(1, len(history["train_loss"]) + 1)
-
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.plot(epochs, history["train_loss"], label="train loss")
     ax.plot(epochs, history["val_loss"], label="val loss")
-
     ax.set_xlabel("Epoch")
     ax.set_ylabel("Loss")
+
     if epoch is None:
         ax.set_title("Training and Validation Loss")
     else:
         ax.set_title(f"Training and Validation Loss (up to epoch {epoch})")
+
     ax.grid(True, alpha=0.3)
     ax.legend()
-
     fig.tight_layout()
+
     save_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(save_path, dpi=150, bbox_inches="tight")
     plt.close(fig)
@@ -70,7 +70,9 @@ def save_loss_plot(history: dict, save_path: Path, epoch: int | None = None) -> 
 def maybe_init_wandb(cfg: DictConfig):
     if not cfg.logger.use_wandb:
         return None
+
     import wandb
+
     return wandb.init(
         project=cfg.logger.project,
         entity=cfg.logger.entity,
@@ -83,7 +85,6 @@ def maybe_init_wandb(cfg: DictConfig):
 @hydra.main(version_base=None, config_path="../../conf", config_name="config")
 def main(cfg: DictConfig) -> None:
     print(OmegaConf.to_yaml(cfg))
-
     set_seed(cfg.seed)
     device = resolve_device(cfg.trainer.device)
 
@@ -99,7 +100,6 @@ def main(cfg: DictConfig) -> None:
     )
 
     input_dim = train_loader.dataset.win_len
-
     model = Conv1DBetaVAE(
         input_dim=input_dim,
         latent_dim=cfg.model.latent_dim,
@@ -112,7 +112,11 @@ def main(cfg: DictConfig) -> None:
         dropout=cfg.model.dropout,
         gaussian_out=cfg.model.gaussian_out,
         recon_loss_type=cfg.model.recon_loss_type,
-        lambda_fdd=cfg.model.lambda_fdd,
+        lambda_fdd=cfg.model.get("lambda_fdd", 1.0),
+        lambda_cosine=cfg.model.get("lambda_cosine", 1.0),
+        lambda_spectral=cfg.model.get("lambda_spectral", 1.0),
+        huber_delta=cfg.model.get("huber_delta", 1.0),
+        spectral_use_log_magnitude=cfg.model.get("spectral_use_log_magnitude", False),
     ).to(device)
 
     optimizer = torch.optim.Adam(
@@ -123,8 +127,8 @@ def main(cfg: DictConfig) -> None:
 
     train_metrics = build_metrics().to(device)
     val_metrics = build_metrics().to(device)
-
     run = maybe_init_wandb(cfg)
+
     output_dir = Path(HydraConfig.get().runtime.output_dir)
     ckpt_dir = output_dir / "checkpoints"
     recon_dir = output_dir / "reconstructions"
@@ -165,6 +169,7 @@ def main(cfg: DictConfig) -> None:
             grad_clip_norm=cfg.trainer.grad_clip_norm,
             max_batches=cfg.trainer.max_train_batches,
         )
+
         val_stats = validate(
             model=model,
             loader=val_loader,
@@ -176,8 +181,6 @@ def main(cfg: DictConfig) -> None:
 
         history["train_loss"].append(train_stats["loss"])
         history["val_loss"].append(val_stats["loss"])
-
-        # Save/update loss plots every epoch
         save_loss_plot(history, plots_dir / "loss_curve.png", epoch=epoch)
 
         epoch_time = time.time() - epoch_start
@@ -212,7 +215,6 @@ def main(cfg: DictConfig) -> None:
         )
 
         improved = val_stats["loss"] < (best_val_loss - early_stopping_min_delta)
-
         if improved:
             best_val_loss = val_stats["loss"]
             best_epoch = epoch
@@ -243,12 +245,14 @@ def main(cfg: DictConfig) -> None:
             )
 
         if run is not None:
-            run.log({
-                **log_dict,
-                "early_stopping/epochs_without_improvement": epochs_without_improvement,
-                "early_stopping/best_val_loss": best_val_loss,
-                "early_stopping/best_epoch": best_epoch,
-            })
+            run.log(
+                {
+                    **log_dict,
+                    "early_stopping/epochs_without_improvement": epochs_without_improvement,
+                    "early_stopping/best_val_loss": best_val_loss,
+                    "early_stopping/best_epoch": best_epoch,
+                }
+            )
 
         if (
             early_stopping_patience is not None
@@ -275,11 +279,7 @@ def main(cfg: DictConfig) -> None:
         recon_dir / "final.png",
         n=cfg.trainer.num_plot_examples,
     )
-
-    save_loss_plot(
-        history,
-        plots_dir / "loss_curve_final.png",
-    )
+    save_loss_plot(history, plots_dir / "loss_curve_final.png")
 
     if run is not None:
         run.finish()

@@ -1,6 +1,6 @@
 from __future__ import annotations
-
 from typing import Any
+
 import time
 
 import torch
@@ -34,9 +34,14 @@ def _forward_vae(model: torch.nn.Module, x: torch.Tensor):
         raise ValueError(f"Unexpected number of outputs from model: {len(out)}")
 
     recon_loss_type = getattr(model, "recon_loss_type", "fdd")
-    lambda_fdd = getattr(model, "lambda_fdd", 1.0)
-
-    return x_hat, mu, logvar, recon_std, recon_loss_type, lambda_fdd
+    loss_kwargs = {
+        "lambda_fdd": getattr(model, "lambda_fdd", 1.0),
+        "lambda_cosine": getattr(model, "lambda_cosine", 1.0),
+        "lambda_spectral": getattr(model, "lambda_spectral", 1.0),
+        "huber_delta": getattr(model, "huber_delta", 1.0),
+        "spectral_use_log_magnitude": getattr(model, "spectral_use_log_magnitude", False),
+    }
+    return x_hat, mu, logvar, recon_std, recon_loss_type, loss_kwargs
 
 
 def train_one_epoch(
@@ -61,8 +66,7 @@ def train_one_epoch(
         x = x.to(device, non_blocking=True).float()
         optimizer.zero_grad(set_to_none=True)
 
-        x_hat, mu, logvar, recon_std, recon_loss_type, lambda_fdd = _forward_vae(model, x)
-
+        x_hat, mu, logvar, recon_std, recon_loss_type, loss_kwargs = _forward_vae(model, x)
         loss, recon, kl = vae_loss(
             x=x,
             x_hat=x_hat,
@@ -71,7 +75,7 @@ def train_one_epoch(
             beta=beta,
             recon_std=recon_std,
             recon_loss_type=recon_loss_type,
-            lambda_fdd=lambda_fdd,
+            **loss_kwargs,
         )
 
         if not torch.isfinite(loss):
@@ -114,7 +118,8 @@ def validate(
             break
 
         x = x.to(device, non_blocking=True).float()
-        x_hat, mu, logvar, recon_std, recon_loss_type, lambda_fdd = _forward_vae(model, x)
+
+        x_hat, mu, logvar, recon_std, recon_loss_type, loss_kwargs = _forward_vae(model, x)
 
         if recon_std is not None and batch_idx == 0:
             print(
@@ -131,7 +136,7 @@ def validate(
             beta=beta,
             recon_std=recon_std,
             recon_loss_type=recon_loss_type,
-            lambda_fdd=lambda_fdd,
+            **loss_kwargs,
         )
 
         if not torch.isfinite(loss):
