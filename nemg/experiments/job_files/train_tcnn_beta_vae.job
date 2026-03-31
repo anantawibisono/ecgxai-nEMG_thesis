@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=van_de_leur_FDD_loss
+#SBATCH --job-name=tcnn_beta_vae
 #SBATCH --partition=gpu_a100
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
@@ -14,7 +14,6 @@ set -euo pipefail
 module purge
 module load 2025
 module load Anaconda3/2025.06-1
-
 source ~/venvs/nemg/bin/activate
 
 mkdir -p job_log
@@ -36,18 +35,19 @@ echo "=============================="
 
 nvidia-smi || true
 
-srun python -m nemg.experiments.van_de_leur_model.train --multirun \
-  experiment_name=van_de_leur_model_FDD_loss \
-  model=van_de_leur_model \
-  model.beta=0.0,0.01,0.1 \
-  model.beta_warmup_epochs=20 \
-  model.latent_dim=32,64 \
-  model.gaussian_out=false \
-  model.recon_loss_type=fdd \
-  model.lambda_fdd=1.0 \
-  trainer.epochs=200 \
-  trainer.lr=1e-4 \
+srun python -m nemg.experiments.tcnn_beta_vae.train \
+  experiment_name=tcnn_beta_vae \
+  model=tcnn_beta_vae \
+  model.latent_dim=32 \
+  model.hidden_dim=128 \
+  model.seed_len=32 \
+  model.beta=0.00 \
+  model.beta_warmup_epochs=0 \
+  trainer.epochs=70\
+  trainer.lr=3e-4 \
   data.batch_size=32 \
   trainer.device=cuda \
-  trainer.plot_recons_every_n_epochs=10 \
+  trainer.plot_recons_every_n_epochs=5 \
+  trainer.early_stopping_patience=10 \
+  trainer.early_stopping_min_delta=1e-4 \
   logger=none
