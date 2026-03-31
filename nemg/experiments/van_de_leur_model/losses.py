@@ -38,6 +38,17 @@ def gaussian_recon_loss(
     return nll.mean(dim=1).mean()
 
 
+
+
+def mse_recon_loss(
+    x: torch.Tensor,
+    x_hat: torch.Tensor,
+) -> torch.Tensor:
+    x = x.flatten(start_dim=1)
+    x_hat = x_hat.flatten(start_dim=1)
+    return F.mse_loss(x_hat, x, reduction="mean")
+
+
 def fdd_recon_loss(
     x: torch.Tensor,
     x_hat: torch.Tensor,
@@ -78,7 +89,7 @@ def vae_loss(
         recon = gaussian_recon_loss(x, x_hat, recon_std)
 
     elif recon_loss_type == "mse":
-        recon = fdd_recon_loss(x, x_hat, lambda_fdd=lambda_fdd)
+        recon = mse_recon_loss(x, x_hat)
 
     elif recon_loss_type == "fdd":
         recon = fdd_recon_loss(x, x_hat, lambda_fdd=lambda_fdd)

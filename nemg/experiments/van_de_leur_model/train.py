@@ -111,6 +111,8 @@ def main(cfg: DictConfig) -> None:
         softplus_eps=cfg.model.softplus_eps,
         dropout=cfg.model.dropout,
         gaussian_out=cfg.model.gaussian_out,
+        recon_loss_type=cfg.model.recon_loss_type,
+        lambda_fdd=cfg.model.lambda_fdd,
     ).to(device)
 
     optimizer = torch.optim.Adam(
