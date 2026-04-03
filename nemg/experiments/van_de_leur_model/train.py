@@ -117,6 +117,7 @@ def main(cfg: DictConfig) -> None:
         lambda_spectral=cfg.model.get("lambda_spectral", 1.0),
         huber_delta=cfg.model.get("huber_delta", 1.0),
         spectral_use_log_magnitude=cfg.model.get("spectral_use_log_magnitude", False),
+        event_weight_alpha=cfg.model.get("event_weight_alpha", 2.0),
     ).to(device)
 
     optimizer = torch.optim.Adam(

@@ -6,7 +6,7 @@ defaults:
   - _self_
 
 seed: 42
-experiment_name: simple_vae_nemg
+experiment_name: vandeleur_model_huber_loss
 
 hydra:
   run:

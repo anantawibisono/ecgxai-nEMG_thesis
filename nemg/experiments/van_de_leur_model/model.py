@@ -228,6 +228,7 @@ class Conv1DBetaVAE(nn.Module):
         lambda_spectral: float = 1.0,
         huber_delta: float = 1.0,
         spectral_use_log_magnitude: bool = False,
+        event_weight_alpha: float = 2.0,
     ):
         super().__init__()
         self.input_dim = input_dim
@@ -239,6 +240,7 @@ class Conv1DBetaVAE(nn.Module):
         self.lambda_spectral = lambda_spectral
         self.huber_delta = huber_delta
         self.spectral_use_log_magnitude = spectral_use_log_magnitude
+        self.event_weight_alpha = event_weight_alpha
 
         if recon_loss_type is None:
             self.recon_loss_type = "gaussian" if gaussian_out else "mse"
@@ -248,7 +250,7 @@ class Conv1DBetaVAE(nn.Module):
         if self.recon_loss_type == "gaussian" and not gaussian_out:
             raise ValueError("recon_loss_type='gaussian' requires gaussian_out=True")
 
-        if self.recon_loss_type in {"mse", "fdd", "huber_cosine", "mse_spectral"} and gaussian_out:
+        if self.recon_loss_type in {"mse", "fdd", "huber_cosine", "mse_spectral", "weighted_huber_cosine"} and gaussian_out:
             print(
                 f"Warning: gaussian_out=True but recon_loss_type='{self.recon_loss_type}'. "
                 "recon_std will be produced by the decoder but ignored by the loss."

@@ -95,6 +95,41 @@ def huber_cosine_recon_loss(
     return huber + lambda_cosine * cos_term
 
 
+def weighted_huber_cosine_recon_loss(
+    x: torch.Tensor,
+    x_hat: torch.Tensor,
+    lambda_cosine: float = 1.0,
+    huber_delta: float = 1.0,
+    event_weight_alpha: float = 2.0,
+    eps: float = 1.0e-8,
+) -> torch.Tensor:
+    x = _flatten_signal(x)
+    x_hat = _flatten_signal(x_hat)
+
+    x_centered = x - x.mean(dim=1, keepdim=True)
+    x_hat_centered = x_hat - x_hat.mean(dim=1, keepdim=True)
+
+    err = x_hat - x
+    abs_err = err.abs()
+    huber = torch.where(
+        abs_err <= huber_delta,
+        0.5 * abs_err.pow(2) / huber_delta,
+        abs_err - 0.5 * huber_delta,
+    )
+
+    event_mag = x_centered.abs()
+    event_mag = event_mag / event_mag.amax(dim=1, keepdim=True).clamp_min(eps)
+    weights = 1.0 + event_weight_alpha * event_mag
+
+    weighted_huber = (weights * huber).sum(dim=1) / weights.sum(dim=1).clamp_min(eps)
+    weighted_huber = weighted_huber.mean()
+
+    cos_sim = F.cosine_similarity(x_hat_centered, x_centered, dim=1, eps=eps)
+    centered_cos_term = ((1.0 - cos_sim) / 2.0).mean()
+
+    return weighted_huber + lambda_cosine * centered_cos_term
+
+
 def mse_spectral_recon_loss(
     x: torch.Tensor,
     x_hat: torch.Tensor,
@@ -119,6 +154,7 @@ def vae_loss(
     lambda_spectral: float = 1.0,
     huber_delta: float = 1.0,
     spectral_use_log_magnitude: bool = False,
+    event_weight_alpha: float = 2.0,
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     if recon_loss_type == "gaussian":
         if recon_std is None:
@@ -141,6 +177,14 @@ def vae_loss(
             x_hat,
             lambda_spectral=lambda_spectral,
             spectral_use_log_magnitude=spectral_use_log_magnitude,
+        )
+    elif recon_loss_type == "weighted_huber_cosine":
+        recon = weighted_huber_cosine_recon_loss(
+            x,
+            x_hat,
+            lambda_cosine=lambda_cosine,
+            huber_delta=huber_delta,
+            event_weight_alpha=event_weight_alpha,
         )
     else:
         raise ValueError(f"Unsupported recon_loss_type: {recon_loss_type}")

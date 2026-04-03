@@ -40,6 +40,7 @@ def _forward_vae(model: torch.nn.Module, x: torch.Tensor):
         "lambda_spectral": getattr(model, "lambda_spectral", 1.0),
         "huber_delta": getattr(model, "huber_delta", 1.0),
         "spectral_use_log_magnitude": getattr(model, "spectral_use_log_magnitude", False),
+        "event_weight_alpha": getattr(model, "event_weight_alpha", 2.0),
     }
     return x_hat, mu, logvar, recon_std, recon_loss_type, loss_kwargs
 
