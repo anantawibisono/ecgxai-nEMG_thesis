@@ -1,13 +1,12 @@
 #!/bin/bash
-#SBATCH --job-name=van_de_leur_betas_huber
+#SBATCH --job-name=van_de_leur_model_dims_betas_higher_nds
 #SBATCH --partition=gpu_a100
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=9
-#SBATCH --time=08:00:00
-#SBATCH --chdir=/home/awibisono1/FactorEMG/nemg/experiments/job_files
+#SBATCH --time=30:00:00
+#SBATCH --chdir=/home/awibisono1/FactorEMG/job_files
 #SBATCH --output=job_log/%x_%j.out
-#SBATCH --error=job_log/%x_%j.err
 
 set -euo pipefail
 
@@ -36,17 +35,17 @@ echo "=============================="
 
 nvidia-smi || true
 
-srun python -m nemg.experiments.van_de_leur_model.train --multirun\
-  experiment_name=van_de_leur_model_betas_huber \
+srun python -m nemg.experiments.van_de_leur_model.train --multirun \
+  experiment_name=van_de_leur_model_dims_betas_higher_nds \
   model=van_de_leur_model \
-  model.beta=0.002 \
+  model.beta=0.002,0.01,0.1\
   model.beta_warmup_epochs=60 \
-  model.latent_dim=32 \
+  model.latent_dim=64,128 \
   model.gaussian_out=false \
   model.recon_loss_type=weighted_huber_cosine \
   model.lambda_fdd=1.0 \
   model.lambda_cosine=0.25\
-  trainer.epochs=200 \
+  trainer.epochs=150 \
   trainer.lr=1e-4 \
   trainer.early_stopping_patience=200 \
   data.batch_size=32 \

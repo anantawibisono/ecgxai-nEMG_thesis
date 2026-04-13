@@ -67,6 +67,28 @@ def save_loss_plot(history: dict, save_path: Path, epoch: int | None = None) -> 
     plt.close(fig)
 
 
+def save_kl_plot(history: dict, save_path: Path, epoch: int | None = None) -> None:
+    epochs = range(1, len(history["train_kl"]) + 1)
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.plot(epochs, history["train_kl"], label="train kl")
+    ax.plot(epochs, history["val_kl"], label="val kl")
+    ax.set_xlabel("Epoch")
+    ax.set_ylabel("KL")
+
+    if epoch is None:
+        ax.set_title("Training and Validation KL")
+    else:
+        ax.set_title(f"Training and Validation KL (up to epoch {epoch})")
+
+    ax.grid(True, alpha=0.3)
+    ax.legend()
+    fig.tight_layout()
+
+    save_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(save_path, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+
+
 def maybe_init_wandb(cfg: DictConfig):
     if not cfg.logger.use_wandb:
         return None
@@ -149,6 +171,8 @@ def main(cfg: DictConfig) -> None:
     history = {
         "train_loss": [],
         "val_loss": [],
+        "train_kl": [],
+        "val_kl": [],
     }
 
     print(f"Device: {device}")
@@ -182,7 +206,11 @@ def main(cfg: DictConfig) -> None:
 
         history["train_loss"].append(train_stats["loss"])
         history["val_loss"].append(val_stats["loss"])
+        history["train_kl"].append(train_stats["kl"])
+        history["val_kl"].append(val_stats["kl"])
+
         save_loss_plot(history, plots_dir / "loss_curve.png", epoch=epoch)
+        save_kl_plot(history, plots_dir / "kl_curve.png", epoch=epoch)
 
         epoch_time = time.time() - epoch_start
         log_dict = {
@@ -281,6 +309,7 @@ def main(cfg: DictConfig) -> None:
         n=cfg.trainer.num_plot_examples,
     )
     save_loss_plot(history, plots_dir / "loss_curve_final.png")
+    save_kl_plot(history, plots_dir / "kl_curve_final.png")
 
     if run is not None:
         run.finish()

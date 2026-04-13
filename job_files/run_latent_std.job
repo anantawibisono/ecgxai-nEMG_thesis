@@ -7,11 +7,10 @@
 #SBATCH --time=04:00:00
 
 # make experiments the working directory
-#SBATCH --chdir=/home/awibisono1/FactorEMG/nemg/experiments/job_files
+#SBATCH --chdir=/home/awibisono1/FactorEMG/job_files
 
 # save logs inside experiments/job_log
 #SBATCH --output=job_log/%x_%j.out
-#SBATCH --error=job_log/%x_%j.err
 
 module purge
 module load 2025
@@ -21,7 +20,9 @@ module load Anaconda3/2025.06-1
 source ~/venvs/nemg/bin/activate
 
 cd /home/awibisono1/FactorEMG
-srun python -m nemg.experiments.van_de_leur_model.plot_latent_pca \
+srun python -m nemg.experiments.van_de_leur_model.plot_latent_z_std \
   --ckpt multirun/van_de_leur_model_betas_huber/2026-04-02/22-25-06/1/checkpoints/last.pt \
-  --split val \
-  --outdir outputs/PCA_vandeleur/beta0.002/latent_pca_tsne_umap
+  --splits train val \
+  --outdir outputs/latents/beta0.002_l32_kl
+
+  

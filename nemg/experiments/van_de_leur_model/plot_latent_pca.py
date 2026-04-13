@@ -73,6 +73,18 @@ def parse_args():
         help="Directory to save plots and CSVs",
     )
 
+    # New options
+    parser.add_argument(
+        "--no-standardize",
+        action="store_true",
+        help="Use raw latent means (mu) instead of StandardScaler-normalized latents.",
+    )
+    parser.add_argument(
+        "--save-both",
+        action="store_true",
+        help="Save both standardized and raw projections side by side.",
+    )
+
     # UMAP options
     parser.add_argument(
         "--umap-n-neighbors",
@@ -154,6 +166,7 @@ def build_model_from_checkpoint(ckpt: dict, device: torch.device) -> Conv1DBetaV
         lambda_spectral=model_cfg.get("lambda_spectral", 1.0),
         huber_delta=model_cfg.get("huber_delta", 1.0),
         spectral_use_log_magnitude=model_cfg.get("spectral_use_log_magnitude", False),
+        event_weight_alpha=model_cfg.get("event_weight_alpha", 2.0),
     ).to(device)
 
     model.load_state_dict(ckpt["model_state_dict"])
@@ -170,9 +183,11 @@ def build_loader_from_checkpoint_cfg(
     device: torch.device,
 ):
     data_cfg = ckpt_cfg["data"]
-
     batch_size = batch_size_override or data_cfg["batch_size"]
-    num_workers = num_workers_override if num_workers_override is not None else data_cfg["num_workers"]
+    num_workers = (
+        num_workers_override if num_workers_override is not None
+        else data_cfg["num_workers"]
+    )
     pin_memory = should_use_pin_memory(device, data_cfg["pin_memory"])
 
     if split in {"train", "val"}:
@@ -209,7 +224,6 @@ def build_loader_from_checkpoint_cfg(
 def extract_mu_and_labels(model: Conv1DBetaVAE, loader, device: torch.device):
     all_mu = []
     all_labels = []
-
     total_batches = len(loader)
 
     for i, (x, y) in enumerate(loader):
@@ -218,8 +232,8 @@ def extract_mu_and_labels(model: Conv1DBetaVAE, loader, device: torch.device):
 
         x = x.to(device).float()
         y = y.cpu().numpy()
-
         mu, logvar = model.encode(x)
+
         all_mu.append(mu.cpu().numpy())
         all_labels.append(y)
 
@@ -234,17 +248,37 @@ def standardize_latents(mu: np.ndarray):
     return scaler, mu_scaled
 
 
-def run_pca(mu_scaled: np.ndarray):
+def get_projection_inputs(mu: np.ndarray, args):
+    runs = []
+
+    if args.save_both:
+        _, mu_scaled = standardize_latents(mu)
+        runs.append(("standardized", mu_scaled, "standardized"))
+        runs.append(("raw", mu, "raw"))
+    elif args.no_standardize:
+        runs.append(("raw", mu, "raw"))
+    else:
+        _, mu_scaled = standardize_latents(mu)
+        runs.append(("standardized", mu_scaled, "standardized"))
+
+    return runs
+
+
+def mode_suffix(mode_name: str, save_both: bool, no_standardize: bool) -> str:
+    if save_both or no_standardize:
+        return f"_{mode_name}"
+    return ""
+
+
+def run_pca(latents: np.ndarray):
     pca = PCA(n_components=2, random_state=42)
-    pcs = pca.fit_transform(mu_scaled)
+    pcs = pca.fit_transform(latents)
     return pca, pcs
 
 
 def resolve_tsne_perplexity(n_samples: int, requested_perplexity: float) -> float:
     if n_samples <= 3:
-        raise ValueError(
-            f"Need more than 3 samples for t-SNE, got {n_samples}."
-        )
+        raise ValueError(f"Need more than 3 samples for t-SNE, got {n_samples}.")
 
     max_valid = max(2.0, min(50.0, float(n_samples - 1) / 3.0))
     perplexity = min(requested_perplexity, max_valid)
@@ -259,13 +293,13 @@ def resolve_tsne_perplexity(n_samples: int, requested_perplexity: float) -> floa
 
 
 def run_tsne_2d(
-    mu_scaled: np.ndarray,
+    latents: np.ndarray,
     perplexity: float,
     learning_rate: float,
     n_iter: int,
     random_state: int,
 ):
-    perplexity = resolve_tsne_perplexity(mu_scaled.shape[0], perplexity)
+    perplexity = resolve_tsne_perplexity(latents.shape[0], perplexity)
 
     tsne = TSNE(
         n_components=2,
@@ -275,12 +309,12 @@ def run_tsne_2d(
         init="pca",
         random_state=random_state,
     )
-    embedding = tsne.fit_transform(mu_scaled)
+    embedding = tsne.fit_transform(latents)
     return tsne, embedding, perplexity
 
 
 def run_umap_3d(
-    mu_scaled: np.ndarray,
+    latents: np.ndarray,
     n_neighbors: int,
     min_dist: float,
     metric: str,
@@ -299,7 +333,7 @@ def run_umap_3d(
         metric=metric,
         random_state=random_state,
     )
-    embedding = reducer.fit_transform(mu_scaled)
+    embedding = reducer.fit_transform(latents)
     return reducer, embedding
 
 
@@ -340,6 +374,7 @@ def save_umap_3d_plot(
     n_neighbors: int,
     min_dist: float,
     metric: str,
+    mode_label: str,
 ):
     fig = plt.figure(figsize=(9, 7))
     ax = fig.add_subplot(111, projection="3d")
@@ -359,7 +394,7 @@ def save_umap_3d_plot(
     ax.set_ylabel("UMAP-2")
     ax.set_zlabel("UMAP-3")
     ax.set_title(
-        f"3D UMAP of VAE latent means (mu)\n"
+        f"3D UMAP of VAE latent means (mu) [{mode_label}]\n"
         f"n_neighbors={n_neighbors}, min_dist={min_dist}, metric={metric}"
     )
     ax.legend()
@@ -401,105 +436,115 @@ def main():
     )
 
     mu, labels = extract_mu_and_labels(model, loader, device=device)
-    _, mu_scaled = standardize_latents(mu)
+    projection_runs = get_projection_inputs(mu, args)
 
-    # PCA
-    pca, pcs = run_pca(mu_scaled)
-    pca_plot_path = outdir / f"latent_pca_{args.split}.png"
-    pca_csv_path = outdir / f"latent_pca_{args.split}.csv"
-    save_2d_plot(
-        projection=pcs,
-        labels=labels,
-        save_path=pca_plot_path,
-        x_label=f"PC1 ({pca.explained_variance_ratio_[0] * 100:.1f}%)",
-        y_label=f"PC2 ({pca.explained_variance_ratio_[1] * 100:.1f}%)",
-        title="PCA of VAE latent means (mu)",
-    )
-    save_projection_csv(
-        projection=pcs,
-        labels=labels,
-        save_path=pca_csv_path,
-        coord_names=["pc1", "pc2"],
-    )
+    for mode_name, latents, mode_label in projection_runs:
+        suffix = mode_suffix(mode_name, args.save_both, args.no_standardize)
 
-    # t-SNE 2D
-    tsne, tsne_2d, used_perplexity = run_tsne_2d(
-        mu_scaled=mu_scaled,
-        perplexity=args.tsne_perplexity,
-        learning_rate=args.tsne_learning_rate,
-        n_iter=args.tsne_n_iter,
-        random_state=args.tsne_random_state,
-    )
-    tsne_plot_path = outdir / f"latent_tsne_{args.split}.png"
-    tsne_csv_path = outdir / f"latent_tsne_{args.split}.csv"
-    save_2d_plot(
-        projection=tsne_2d,
-        labels=labels,
-        save_path=tsne_plot_path,
-        x_label="t-SNE-1",
-        y_label="t-SNE-2",
-        title=(
-            f"t-SNE of VAE latent means (mu)\n"
-            f"perplexity={used_perplexity:.2f}, lr={args.tsne_learning_rate}, n_iter={args.tsne_n_iter}"
-        ),
-    )
-    save_projection_csv(
-        projection=tsne_2d,
-        labels=labels,
-        save_path=tsne_csv_path,
-        coord_names=["tsne1", "tsne2"],
-    )
+        print(f"\nRunning projections with {mode_label} latent means...")
 
-    # UMAP 3D
-    reducer, umap_3d = run_umap_3d(
-        mu_scaled=mu_scaled,
-        n_neighbors=args.umap_n_neighbors,
-        min_dist=args.umap_min_dist,
-        metric=args.umap_metric,
-        random_state=args.umap_random_state,
-    )
-    umap_plot_path = outdir / f"latent_umap3d_{args.split}.png"
-    umap_csv_path = outdir / f"latent_umap3d_{args.split}.csv"
-    save_umap_3d_plot(
-        embedding=umap_3d,
-        labels=labels,
-        save_path=umap_plot_path,
-        n_neighbors=args.umap_n_neighbors,
-        min_dist=args.umap_min_dist,
-        metric=args.umap_metric,
-    )
-    save_projection_csv(
-        projection=umap_3d,
-        labels=labels,
-        save_path=umap_csv_path,
-        coord_names=["umap1", "umap2", "umap3"],
-    )
+        # PCA
+        pca, pcs = run_pca(latents)
+        pca_plot_path = outdir / f"latent_pca_{args.split}{suffix}.png"
+        pca_csv_path = outdir / f"latent_pca_{args.split}{suffix}.csv"
 
-    print(f"Saved PCA plot to:      {pca_plot_path}")
-    print(f"Saved PCA CSV to:       {pca_csv_path}")
-    print(f"Saved t-SNE plot to:    {tsne_plot_path}")
-    print(f"Saved t-SNE CSV to:     {tsne_csv_path}")
-    print(f"Saved UMAP 3D plot to:  {umap_plot_path}")
-    print(f"Saved UMAP 3D CSV to:   {umap_csv_path}")
-    print(
-        f"PCA explained variance: "
-        f"PC1={pca.explained_variance_ratio_[0]:.4f}, "
-        f"PC2={pca.explained_variance_ratio_[1]:.4f}"
-    )
-    print(
-        f"t-SNE settings: "
-        f"perplexity={used_perplexity:.2f}, "
-        f"learning_rate={args.tsne_learning_rate}, "
-        f"n_iter={args.tsne_n_iter}, "
-        f"random_state={args.tsne_random_state}"
-    )
-    print(
-        f"UMAP settings: "
-        f"n_neighbors={args.umap_n_neighbors}, "
-        f"min_dist={args.umap_min_dist}, "
-        f"metric={args.umap_metric}, "
-        f"random_state={args.umap_random_state}"
-    )
+        save_2d_plot(
+            projection=pcs,
+            labels=labels,
+            save_path=pca_plot_path,
+            x_label=f"PC1 ({pca.explained_variance_ratio_[0] * 100:.1f}%)",
+            y_label=f"PC2 ({pca.explained_variance_ratio_[1] * 100:.1f}%)",
+            title=f"PCA of VAE latent means (mu) [{mode_label}]",
+        )
+        save_projection_csv(
+            projection=pcs,
+            labels=labels,
+            save_path=pca_csv_path,
+            coord_names=["pc1", "pc2"],
+        )
+
+        # t-SNE
+        tsne, tsne_2d, used_perplexity = run_tsne_2d(
+            latents=latents,
+            perplexity=args.tsne_perplexity,
+            learning_rate=args.tsne_learning_rate,
+            n_iter=args.tsne_n_iter,
+            random_state=args.tsne_random_state,
+        )
+        tsne_plot_path = outdir / f"latent_tsne_{args.split}{suffix}.png"
+        tsne_csv_path = outdir / f"latent_tsne_{args.split}{suffix}.csv"
+
+        save_2d_plot(
+            projection=tsne_2d,
+            labels=labels,
+            save_path=tsne_plot_path,
+            x_label="t-SNE-1",
+            y_label="t-SNE-2",
+            title=(
+                f"t-SNE of VAE latent means (mu) [{mode_label}]\n"
+                f"perplexity={used_perplexity:.2f}, "
+                f"lr={args.tsne_learning_rate}, n_iter={args.tsne_n_iter}"
+            ),
+        )
+        save_projection_csv(
+            projection=tsne_2d,
+            labels=labels,
+            save_path=tsne_csv_path,
+            coord_names=["tsne1", "tsne2"],
+        )
+
+        # UMAP
+        reducer, umap_3d = run_umap_3d(
+            latents=latents,
+            n_neighbors=args.umap_n_neighbors,
+            min_dist=args.umap_min_dist,
+            metric=args.umap_metric,
+            random_state=args.umap_random_state,
+        )
+        umap_plot_path = outdir / f"latent_umap3d_{args.split}{suffix}.png"
+        umap_csv_path = outdir / f"latent_umap3d_{args.split}{suffix}.csv"
+
+        save_umap_3d_plot(
+            embedding=umap_3d,
+            labels=labels,
+            save_path=umap_plot_path,
+            n_neighbors=args.umap_n_neighbors,
+            min_dist=args.umap_min_dist,
+            metric=args.umap_metric,
+            mode_label=mode_label,
+        )
+        save_projection_csv(
+            projection=umap_3d,
+            labels=labels,
+            save_path=umap_csv_path,
+            coord_names=["umap1", "umap2", "umap3"],
+        )
+
+        print(f"Saved PCA plot to: {pca_plot_path}")
+        print(f"Saved PCA CSV to: {pca_csv_path}")
+        print(f"Saved t-SNE plot to: {tsne_plot_path}")
+        print(f"Saved t-SNE CSV to: {tsne_csv_path}")
+        print(f"Saved UMAP 3D plot to: {umap_plot_path}")
+        print(f"Saved UMAP 3D CSV to: {umap_csv_path}")
+        print(
+            f"PCA explained variance [{mode_label}]: "
+            f"PC1={pca.explained_variance_ratio_[0]:.4f}, "
+            f"PC2={pca.explained_variance_ratio_[1]:.4f}"
+        )
+        print(
+            f"t-SNE settings [{mode_label}]: "
+            f"perplexity={used_perplexity:.2f}, "
+            f"learning_rate={args.tsne_learning_rate}, "
+            f"n_iter={args.tsne_n_iter}, "
+            f"random_state={args.tsne_random_state}"
+        )
+        print(
+            f"UMAP settings [{mode_label}]: "
+            f"n_neighbors={args.umap_n_neighbors}, "
+            f"min_dist={args.umap_min_dist}, "
+            f"metric={args.umap_metric}, "
+            f"random_state={args.umap_random_state}"
+        )
 
 
 if __name__ == "__main__":

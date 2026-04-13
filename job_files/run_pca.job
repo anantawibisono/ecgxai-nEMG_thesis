@@ -1,0 +1,27 @@
+#!/bin/bash
+#SBATCH --job-name=run_-pca
+#SBATCH --partition=gpu_mig
+#SBATCH --gpus=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=9
+#SBATCH --time=04:00:00
+
+# make experiments the working directory
+#SBATCH --chdir=/home/awibisono1/FactorEMG/job_files
+
+# save logs inside experiments/job_log
+#SBATCH --output=job_log/%x_%j.out
+
+module purge
+module load 2025
+module load Anaconda3/2025.06-1
+
+# activate env here
+source ~/venvs/nemg/bin/activate
+
+cd /home/awibisono1/FactorEMG
+srun python -m nemg.experiments.van_de_leur_model.plot_latent_pca \
+  --ckpt multirun/van_de_leur_model_betas_huber/2026-04-02/22-25-06/1/checkpoints/last.pt \
+  --split val \
+  --save-both \
+  --outdir outputs/PCA_vandeleur/beta0.002/latent_pca_tsne_umap

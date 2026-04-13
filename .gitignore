@@ -134,9 +134,8 @@ checkpoints
 lightning_logs
 
 #data
-data/emglab/
-nemg/experiments/job_files/job_log/
-nemg/experiments/job_files/job_log_past/
+data/
+job_files/job_log/
 wandb/
 outputs/
 multirun/

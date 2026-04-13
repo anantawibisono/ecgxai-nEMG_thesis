@@ -1,0 +1,31 @@
+#!/bin/bash
+#SBATCH --job-name=run_classifier
+#SBATCH --partition=gpu_a100
+#SBATCH --gpus=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=9
+#SBATCH --time=04:00:00
+
+# make experiments the working directory
+#SBATCH --chdir=/home/awibisono1/FactorEMG/job_files
+
+# save logs inside experiments/job_log
+#SBATCH --output=job_log/%x_%j.out
+
+module purge
+module load 2025
+module load Anaconda3/2025.06-1
+
+# activate env here
+source ~/venvs/nemg/bin/activate
+
+cd /home/awibisono1/FactorEMG
+srun python -m nemg.experiments.van_de_leur_model.run_latent_recording_multinomial_logreg \
+  --ckpt multirun/multirun_past/van_de_leur_model_beta0.002ds_huber/2026-04-06/11-34-41/1/checkpoints/last.pt \
+  --feature mu \
+  --outdir outputs/latent_recording_multinomial_logreg/beta_0.002_dim16_ds
+
+srun python -m nemg.experiments.van_de_leur_model.run_latent_recording_multinomial_logreg \
+  --ckpt multirun/van_de_leur_model_beta0.002ds_lr32_huber/2026-04-09/12-36-29/0/checkpoints/last.pt \
+  --feature mu \
+  --outdir outputs/latent_recording_multinomial_logreg/beta_0.002_dim32_ds
