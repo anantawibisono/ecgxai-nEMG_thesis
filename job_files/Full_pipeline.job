@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=AMC_data_ds_full
+#SBATCH --job-name=AMC_data_debug_nows
 #SBATCH --partition=gpu_a100
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
@@ -36,10 +36,10 @@ echo "=============================="
 nvidia-smi || true
 
 srun python -m nemg.experiments.van_de_leur_model.train --multirun\
-  experiment_name=AMC_data_ds_full \
+  experiment_name=AMC_debug_nows \
   model=van_de_leur_model \
   model.beta=0.0 \
-  model.beta_warmup_epochs=0 \
+  model.beta_warmup_epochs=20 \
   model.latent_dim=32 \
   model.gaussian_out=false \
   model.recon_loss_type=weighted_huber_cosine \
@@ -47,17 +47,12 @@ srun python -m nemg.experiments.van_de_leur_model.train --multirun\
   model.lambda_cosine=0.25\
   trainer.epochs=150 \
   trainer.lr=1e-4 \
-  trainer.early_stopping_patience=10 \
   data.batch_size=32 \
-  data=amc \
-  data.windows_dir=data/AMC_data/AMC_windows_w100_h100_minmax_f25 \
-  data.use_downsampled=true \
+  # data=amc \
+  # data.windows_dir=data/AMC_data/AMC_windows_w100_h100 \
+  data=emglab \
+  data.windows_dir=data/emglab/windows_w400_h100 \
+  data.use_downsampled=false \
   trainer.device=cuda \
   trainer.plot_recons_every_n_epochs=10 \
   logger=none
-
-# data=amc \
-# data.windows_dir=data/AMC_data/AMC_windows_w100_h100 \
-
-# data=emglab \
-# data.windows_dir=data/emglab/windows_w50_h100 \

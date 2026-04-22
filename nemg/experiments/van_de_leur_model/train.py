@@ -7,7 +7,6 @@ import hydra
 import matplotlib
 
 matplotlib.use("Agg")
-
 import matplotlib.pyplot as plt
 import torch
 from hydra.core.hydra_config import HydraConfig
@@ -15,14 +14,20 @@ from omegaconf import DictConfig, OmegaConf
 
 from nemg.dataset.dataset import build_dataloaders
 from nemg.experiments.simple_vae.metrics import build_metrics
-from nemg.experiments.simple_vae.utils import count_parameters, resolve_device, set_seed
+from nemg.experiments.simple_vae.utils import (
+    count_parameters,
+    resolve_device,
+    set_seed,
+)
 from nemg.experiments.van_de_leur_model.engine import train_one_epoch, validate
 from nemg.experiments.van_de_leur_model.losses import beta_for_epoch
 from nemg.experiments.van_de_leur_model.model import Conv1DBetaVAE
 
 
 @torch.no_grad()
-def save_reconstruction_plot(model, loader, device, save_path: Path, n: int = 3) -> None:
+def save_reconstruction_plot(
+    model, loader, device, save_path: Path, n: int = 3
+) -> None:
     model.eval()
     x, _ = next(iter(loader))
     x = x.to(device).float()
@@ -38,8 +43,8 @@ def save_reconstruction_plot(model, loader, device, save_path: Path, n: int = 3)
         ax.plot(x_hat[i].numpy(), label="recon")
         ax.set_title(f"Sample {i}")
         ax.legend(loc="upper right")
-    fig.tight_layout()
 
+    fig.tight_layout()
     save_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(save_path, dpi=150, bbox_inches="tight")
     plt.close(fig)
@@ -47,21 +52,20 @@ def save_reconstruction_plot(model, loader, device, save_path: Path, n: int = 3)
 
 def save_loss_plot(history: dict, save_path: Path, epoch: int | None = None) -> None:
     epochs = range(1, len(history["train_loss"]) + 1)
+
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.plot(epochs, history["train_loss"], label="train loss")
     ax.plot(epochs, history["val_loss"], label="val loss")
     ax.set_xlabel("Epoch")
     ax.set_ylabel("Loss")
-
     if epoch is None:
         ax.set_title("Training and Validation Loss")
     else:
         ax.set_title(f"Training and Validation Loss (up to epoch {epoch})")
-
     ax.grid(True, alpha=0.3)
     ax.legend()
-    fig.tight_layout()
 
+    fig.tight_layout()
     save_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(save_path, dpi=150, bbox_inches="tight")
     plt.close(fig)
@@ -69,21 +73,20 @@ def save_loss_plot(history: dict, save_path: Path, epoch: int | None = None) -> 
 
 def save_kl_plot(history: dict, save_path: Path, epoch: int | None = None) -> None:
     epochs = range(1, len(history["train_kl"]) + 1)
+
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.plot(epochs, history["train_kl"], label="train kl")
     ax.plot(epochs, history["val_kl"], label="val kl")
     ax.set_xlabel("Epoch")
     ax.set_ylabel("KL")
-
     if epoch is None:
         ax.set_title("Training and Validation KL")
     else:
         ax.set_title(f"Training and Validation KL (up to epoch {epoch})")
-
     ax.grid(True, alpha=0.3)
     ax.legend()
-    fig.tight_layout()
 
+    fig.tight_layout()
     save_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(save_path, dpi=150, bbox_inches="tight")
     plt.close(fig)
@@ -108,6 +111,7 @@ def maybe_init_wandb(cfg: DictConfig):
 def main(cfg: DictConfig) -> None:
     print(OmegaConf.to_yaml(cfg))
     set_seed(cfg.seed)
+
     device = resolve_device(cfg.trainer.device)
 
     train_loader, val_loader = build_dataloaders(
@@ -119,9 +123,11 @@ def main(cfg: DictConfig) -> None:
         pin_memory=cfg.data.pin_memory,
         cache=cfg.data.cache,
         drop_last_train=cfg.data.drop_last_train,
+        use_weighted_sampler=cfg.data.get("use_weighted_sampler", False),
     )
 
     input_dim = train_loader.dataset.win_len
+
     model = Conv1DBetaVAE(
         input_dim=input_dim,
         latent_dim=cfg.model.latent_dim,
@@ -150,12 +156,14 @@ def main(cfg: DictConfig) -> None:
 
     train_metrics = build_metrics().to(device)
     val_metrics = build_metrics().to(device)
+
     run = maybe_init_wandb(cfg)
 
     output_dir = Path(HydraConfig.get().runtime.output_dir)
     ckpt_dir = output_dir / "checkpoints"
     recon_dir = output_dir / "reconstructions"
     plots_dir = output_dir / "plots"
+
     ckpt_dir.mkdir(parents=True, exist_ok=True)
     recon_dir.mkdir(parents=True, exist_ok=True)
     plots_dir.mkdir(parents=True, exist_ok=True)
@@ -168,6 +176,16 @@ def main(cfg: DictConfig) -> None:
     epochs_without_improvement = 0
     best_epoch = 0
 
+    beta_warmup_epochs = cfg.model.get("beta_warmup_epochs", 0)
+    use_delayed_early_stopping = (
+        early_stopping_patience is not None and beta_warmup_epochs > 0
+    )
+
+    # Separate tracking for early stopping logic.
+    # This starts only after warmup if beta warmup is enabled.
+    es_best_val_loss = float("inf")
+    early_stopping_active = not use_delayed_early_stopping
+
     history = {
         "train_loss": [],
         "val_loss": [],
@@ -179,6 +197,13 @@ def main(cfg: DictConfig) -> None:
     print(f"Input dim: {input_dim}")
     print(f"Trainable params: {count_parameters(model):,}")
     print(f"Output dir: {output_dir}")
+    if use_delayed_early_stopping:
+        print(
+            f"Early stopping will be disabled for the first {beta_warmup_epochs} "
+            "epoch(s) because beta warmup is enabled."
+        )
+    else:
+        print("Normal early stopping is active from epoch 1.")
 
     for epoch in range(1, cfg.trainer.epochs + 1):
         epoch_start = time.time()
@@ -213,6 +238,7 @@ def main(cfg: DictConfig) -> None:
         save_kl_plot(history, plots_dir / "kl_curve.png", epoch=epoch)
 
         epoch_time = time.time() - epoch_start
+
         log_dict = {
             "epoch": epoch,
             "beta": beta,
@@ -243,11 +269,11 @@ def main(cfg: DictConfig) -> None:
             ckpt_dir / "last.pt",
         )
 
+        # Global best checkpoint saving: keep this exactly as normal.
         improved = val_stats["loss"] < (best_val_loss - early_stopping_min_delta)
         if improved:
             best_val_loss = val_stats["loss"]
             best_epoch = epoch
-            epochs_without_improvement = 0
             torch.save(
                 {
                     "epoch": epoch,
@@ -258,8 +284,26 @@ def main(cfg: DictConfig) -> None:
                 },
                 best_ckpt_path,
             )
-        else:
-            epochs_without_improvement += 1
+
+        # Early stopping logic:
+        # - if beta_warmup_epochs > 0: start only after warmup ends
+        # - otherwise: normal early stopping from epoch 1
+        if early_stopping_patience is not None:
+            if use_delayed_early_stopping and not early_stopping_active:
+                if epoch > beta_warmup_epochs:
+                    early_stopping_active = True
+                    es_best_val_loss = val_stats["loss"]
+                    epochs_without_improvement = 0
+                    print(
+                        f"Beta warmup finished at epoch {beta_warmup_epochs}. "
+                        f"Early stopping activated at epoch {epoch}."
+                    )
+            elif early_stopping_active:
+                if val_stats["loss"] < (es_best_val_loss - early_stopping_min_delta):
+                    es_best_val_loss = val_stats["loss"]
+                    epochs_without_improvement = 0
+                else:
+                    epochs_without_improvement += 1
 
         if (
             cfg.trainer.plot_recons_every_n_epochs is not None
@@ -277,6 +321,8 @@ def main(cfg: DictConfig) -> None:
             run.log(
                 {
                     **log_dict,
+                    "early_stopping/use_delayed": use_delayed_early_stopping,
+                    "early_stopping/active": early_stopping_active,
                     "early_stopping/epochs_without_improvement": epochs_without_improvement,
                     "early_stopping/best_val_loss": best_val_loss,
                     "early_stopping/best_epoch": best_epoch,
@@ -285,6 +331,7 @@ def main(cfg: DictConfig) -> None:
 
         if (
             early_stopping_patience is not None
+            and early_stopping_active
             and epochs_without_improvement >= early_stopping_patience
         ):
             print(
@@ -308,6 +355,7 @@ def main(cfg: DictConfig) -> None:
         recon_dir / "final.png",
         n=cfg.trainer.num_plot_examples,
     )
+
     save_loss_plot(history, plots_dir / "loss_curve_final.png")
     save_kl_plot(history, plots_dir / "kl_curve_final.png")
 

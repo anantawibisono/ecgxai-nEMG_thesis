@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=nemg_run
-#SBATCH --partition=gpu_mig
+#SBATCH --partition=gpu_a100
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=9
@@ -20,5 +20,5 @@ module load Anaconda3/2025.06-1
 # activate env here
 source ~/venvs/nemg/bin/activate
 
-cd /home/awibisono1/FactorEMG/nemg/experiments
-srun test.py
+cd /home/awibisono1/FactorEMG/
+srun python nemg/preprocessing/windowing.py   --input_dir "data/AMC_data/wav/waveforms"   --output_dir "data/AMC_data/wav/AMC_windows_w100_h100"   --win_ms 100 --hop_ms 100   --write_manifest

@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """
-Dataset and DataLoader utilities for windowed nEMG signals (EMGLab).
+Dataset and DataLoader utilities for windowed nEMG signals (EMGLab/AMC).
 
 Supports:
   - Raw windowed .npz files (from windowing.py)
   - MinMax-downsampled .npz files (from downsample_windows.py)
   - 5-fold cross-validation splits (train.csv / val.csv / test.csv)
   - Flexible window-level sampling across different window sizes
+  - Optional weighted sampling for imbalanced training sets
 
 Key design choice:
   The dataset uses the actual number of windows inside each .npz file
@@ -34,6 +35,7 @@ Usage example:
 
 from __future__ import annotations
 
+from collections import Counter
 from pathlib import Path
 from typing import Callable, Optional, Union
 
@@ -41,13 +43,14 @@ import numpy as np
 import pandas as pd
 import torch
 from torch import Tensor
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader, Dataset, WeightedRandomSampler
 
 
 # ---------------------------------------------------------------------------
 # Label helpers
 # ---------------------------------------------------------------------------
 
+# Keep the original label strings because your AMC split CSVs already use them.
 LABEL_TO_INT: dict[str, int] = {
     "ALS": 0,
     "Normal": 1,
@@ -274,6 +277,27 @@ class EMGWindowDataset(Dataset):
 
 
 # ---------------------------------------------------------------------------
+# Sampler helper
+# ---------------------------------------------------------------------------
+
+
+def build_weighted_sampler(ds: EMGWindowDataset) -> WeightedRandomSampler:
+    """
+    Build a window-level weighted sampler from dataset labels.
+    Minority classes get sampled more often.
+    """
+    counts = Counter(ds.labels)
+    class_weights = {cls: 1.0 / count for cls, count in counts.items()}
+    sample_weights = torch.DoubleTensor([class_weights[label] for label in ds.labels])
+
+    return WeightedRandomSampler(
+        weights=sample_weights,
+        num_samples=len(sample_weights),
+        replacement=True,
+    )
+
+
+# ---------------------------------------------------------------------------
 # DataLoader builders
 # ---------------------------------------------------------------------------
 
@@ -289,6 +313,7 @@ def build_dataloaders(
     val_transform: Optional[Callable[[Tensor], Tensor]] = None,
     cache: bool = True,
     drop_last_train: bool = True,
+    use_weighted_sampler: bool = False,
 ) -> tuple[DataLoader, DataLoader]:
     """
     Build train and validation DataLoaders for one fold.
@@ -310,15 +335,23 @@ def build_dataloaders(
         cache=cache,
     )
 
-    train_loader = DataLoader(
-        train_ds,
+    train_loader_kwargs = dict(
+        dataset=train_ds,
         batch_size=batch_size,
-        shuffle=True,
         num_workers=num_workers,
         pin_memory=pin_memory,
         drop_last=drop_last_train,
         persistent_workers=num_workers > 0,
     )
+
+    if use_weighted_sampler:
+        train_loader_kwargs["sampler"] = build_weighted_sampler(train_ds)
+        train_loader_kwargs["shuffle"] = False
+    else:
+        train_loader_kwargs["shuffle"] = True
+
+    train_loader = DataLoader(**train_loader_kwargs)
+
     val_loader = DataLoader(
         val_ds,
         batch_size=batch_size,
@@ -369,8 +402,6 @@ def build_test_loader(
 
 def dataset_info(ds: EMGWindowDataset) -> None:
     """Print a quick summary of the dataset."""
-    from collections import Counter
-
     label_int_to_str = {v: k for k, v in LABEL_TO_INT.items()}
     counts = Counter(ds.labels)
 
@@ -389,11 +420,6 @@ def dataset_info(ds: EMGWindowDataset) -> None:
 
 if __name__ == "__main__":
     import sys
-
-    # Example:
-    # python nemg/dataset/dataset.py data/emglab/splits/fold_0 data/emglab/windows_w400_h100
-    # python nemg/dataset/dataset.py data/emglab/splits/fold_0 data/emglab/windows_w2000_h100
-    # python nemg/dataset/dataset.py data/emglab/splits/fold_0 data/emglab/windows_w400_h100_minmax_f25 --ds
 
     args = sys.argv[1:]
     use_ds = "--ds" in args

@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=van_de_leur_model_dims_betas_higher_nds
+#SBATCH --job-name=beta0.001_dim_32_ds 
 #SBATCH --partition=gpu_a100
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
@@ -36,21 +36,21 @@ echo "=============================="
 nvidia-smi || true
 
 srun python -m nemg.experiments.van_de_leur_model.train --multirun \
-  experiment_name=van_de_leur_model_dims_betas_higher_nds \
+  experiment_name=beta0.001_dim_32_ds \
   model=van_de_leur_model \
-  model.beta=0.002,0.01,0.1\
+  model.beta=0.001 \
   model.beta_warmup_epochs=60 \
-  model.latent_dim=64,128 \
+  model.latent_dim=32 \
   model.gaussian_out=false \
   model.recon_loss_type=weighted_huber_cosine \
   model.lambda_fdd=1.0 \
   model.lambda_cosine=0.25\
-  trainer.epochs=150 \
+  trainer.epochs=200 \
   trainer.lr=1e-4 \
-  trainer.early_stopping_patience=200 \
+  trainer.early_stopping_patience=10 \
   data.batch_size=32 \
-  data.windows_dir=data/emglab/windows_w100_h100 \
-  data.use_downsampled=false \
+  data.windows_dir=data/emglab/windows_w100_h100_minmax_f25 \
+  data.use_downsampled=true \
   trainer.device=cuda \
   trainer.plot_recons_every_n_epochs=10 \
   logger=none

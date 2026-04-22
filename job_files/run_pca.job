@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=run_-pca
-#SBATCH --partition=gpu_mig
+#SBATCH --partition=gpu_a100
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=9
@@ -21,7 +21,7 @@ source ~/venvs/nemg/bin/activate
 
 cd /home/awibisono1/FactorEMG
 srun python -m nemg.experiments.van_de_leur_model.plot_latent_pca \
-  --ckpt multirun/van_de_leur_model_betas_huber/2026-04-02/22-25-06/1/checkpoints/last.pt \
+  --ckpt multirun/beta0.001_dims_8_16_32/2026-04-16/12-32-24/2/checkpoints/last.pt \
   --split val \
   --save-both \
-  --outdir outputs/PCA_vandeleur/beta0.002/latent_pca_tsne_umap
+  --outdir outputs/PCA_vandeleur/beta0.001_dim32/latent_pca_tsne_umap

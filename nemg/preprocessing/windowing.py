@@ -78,13 +78,14 @@ def process_one_file(
     win_ms: float,
     hop_ms: float,
     dtype_out: np.dtype = np.float32,
-    scale_int16: bool = True,
     overwrite: bool = False,
 ) -> Tuple[bool, Optional[str]]:
     """
     Returns:
       (success, message_if_skipped_or_error)
     """
+    import soundfile as sf
+
     rel = safe_relpath(wav_path, input_root)
     out_path = (output_root / rel).with_suffix(".npz")
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -92,23 +93,24 @@ def process_one_file(
     if out_path.exists() and not overwrite:
         return False, f"SKIP exists: {out_path}"
 
-    fs, sig = wavfile.read(str(wav_path))
+    try:
+        sig, fs = sf.read(str(wav_path), always_2d=False)
+    except Exception as e:
+        return False, f"ERROR reading WAV {wav_path}: {type(e).__name__}: {e}"
 
-    # Expect mono (N,) based on your earlier check
-    if sig.ndim != 1:
-        return False, f"ERROR non-mono WAV {wav_path} shape={sig.shape}"
+    # Convert stereo/multichannel to mono instead of failing
+    if sig.ndim == 2:
+        sig = sig.mean(axis=1)
+    elif sig.ndim != 1:
+        return False, f"ERROR unexpected shape {wav_path} shape={sig.shape}"
 
-    # Convert to float
     x = sig.astype(dtype_out, copy=False)
-    if scale_int16 and sig.dtype == np.int16:
-        x = x / 32768.0
 
     win = ms_to_samples(win_ms, fs)
     hop = ms_to_samples(hop_ms, fs)
 
     windows = make_windows_strided_1d(x, win, hop)
 
-    # Save a compact NPZ; copy to ensure contiguous array on disk
     np.savez_compressed(
         str(out_path),
         windows=np.array(windows, dtype=dtype_out, copy=True),
@@ -209,8 +211,8 @@ if __name__ == "__main__":
 
 # python nemg/preprocessing/windowing.py \
 #   --input_dir "data/emglab/raw_wav" \
-#   --output_dir "data/emglab/windows_w100_h100" \
-#   --win_ms 100 --hop_ms 100 \
+#   --output_dir "data/emglab/windows_w50_h100" \
+#   --win_ms 50 --hop_ms 100 \
 #   --write_manifest
 
 # python nemg/preprocessing/windowing.py \
@@ -229,4 +231,11 @@ if __name__ == "__main__":
 #   --input_dir "data/emglab/raw_wav" \
 #   --output_dir "data/emglab/windows_w2000_h100" \
 #   --win_ms 2000 --hop_ms 100 \
+#   --write_manifest
+
+# python nemg/preprocessing/windowing.py \
+#   --input_dir "data/AMC_data/wav/waveforms" \
+#   --output_dir "data/AMC_data/wav/AMC_windows_w100_h100" \
+#   --win_ms 100 --hop_ms 100 \
+#   --limit 10 \
 #   --write_manifest

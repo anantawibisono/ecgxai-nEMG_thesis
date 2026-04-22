@@ -21,11 +21,11 @@ source ~/venvs/nemg/bin/activate
 
 cd /home/awibisono1/FactorEMG
 srun python -m nemg.experiments.van_de_leur_model.run_latent_recording_multinomial_logreg \
-  --ckpt multirun/multirun_past/van_de_leur_model_beta0.002ds_huber/2026-04-06/11-34-41/1/checkpoints/last.pt \
+  --ckpt multirun/van_de_leur_model_betas_huber/2026-04-02/22-25-06/0/checkpoints/last.pt \
   --feature mu \
-  --outdir outputs/latent_recording_multinomial_logreg/beta_0.002_dim16_ds
+  --outdir outputs/latent_recording_multinomial_logreg/beta_0.001_dim32_nds
 
-srun python -m nemg.experiments.van_de_leur_model.run_latent_recording_multinomial_logreg \
-  --ckpt multirun/van_de_leur_model_beta0.002ds_lr32_huber/2026-04-09/12-36-29/0/checkpoints/last.pt \
-  --feature mu \
-  --outdir outputs/latent_recording_multinomial_logreg/beta_0.002_dim32_ds
+# srun python -m nemg.experiments.van_de_leur_model.run_latent_recording_multinomial_logreg \
+#   --ckpt multirun/van_de_leur_model_beta0.002ds_lr32_huber/2026-04-09/12-36-29/0/checkpoints/last.pt \
+#   --feature mu \
+#   --outdir outputs/latent_recording_multinomial_logreg/beta_0.002_dim32_ds
